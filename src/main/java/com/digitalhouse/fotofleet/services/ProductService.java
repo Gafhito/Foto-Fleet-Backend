@@ -27,4 +27,14 @@ public class ProductService {
         Optional<Category> category = categoryService.getCategoryById(productDto.categoryId());
         return productRepository.save(new Product(productDto.name(), productDto.description(), productDto.rentalPrice(), productDto.stock(), category.get()));
     }
+
+    public Optional<Product> getProductById(Integer id){
+        return productRepository.findById(id);
+    }
+
+    public void deleteProduct(Integer id){
+        productRepository.deleteById(id);
+    }
+
+
 }

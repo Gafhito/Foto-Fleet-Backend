@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
@@ -21,9 +23,23 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<?> getProductById(@RequestParam Integer id) {
+       Optional<Product> product = productService.getProductById(id);
+       /*return new ResponseEntity<>(product, HttpStatus.OK);*/
+        return ResponseEntity.ok(product);
+    }
+
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) {
         Product product = productService.createProduct(productDto);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteProduct(@RequestParam Integer id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
