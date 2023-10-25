@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class RentalProduct {
+public class RentalDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
-    private Integer id;
+    @Column(name = "detail_id", nullable = false, unique = true)
+    private Integer detailId;
 
     @ManyToOne
     @JoinColumn(name = "rental_id", nullable = false)
@@ -29,13 +29,17 @@ public class RentalProduct {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "price_per_day", nullable = false)
-    private Double pricePerDay;
+    @Column(name = "rental_price_per_day", nullable = false)
+    private Double rentalPrice;
 
-    public RentalProduct(Rental rental, Product product, Integer quantity, Double pricePerDay) {
+    @Column(name = "days_rented", nullable = false)
+    private Integer daysRented;
+
+    public RentalDetail(Rental rental, Product product, Integer quantity, Double rentalPrice, Integer daysRented) {
         this.rental = rental;
         this.product = product;
         this.quantity = quantity;
-        this.pricePerDay = pricePerDay;
+        this.rentalPrice = rentalPrice;
+        this.daysRented = daysRented;
     }
 }

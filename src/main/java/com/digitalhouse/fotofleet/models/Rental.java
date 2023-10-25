@@ -17,16 +17,12 @@ import java.time.LocalDate;
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
-    private Integer id;
+    @Column(name = "rental_id", nullable = false, unique = true)
+    private Integer rentalId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "rental_status", nullable = false)
-    private RentalStatus rentalStatus;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -34,10 +30,14 @@ public class Rental {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    public Rental(User user, RentalStatus rentalStatus, LocalDate startDate, LocalDate endDate) {
+    @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private Status status;
+
+    public Rental(User user, LocalDate startDate, LocalDate endDate, Status status) {
         this.user = user;
-        this.rentalStatus = rentalStatus;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.status = status;
     }
 }

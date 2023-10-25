@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -18,8 +19,8 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true, length = 36)
-    private Integer id;
+    @Column(name = "user_id", nullable = false, unique = true)
+    private Integer userId;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -34,39 +35,30 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     private String address;
 
     @Column(name = "phone")
     private String phone;
 
-    @ManyToOne
-    @JoinColumn(name = "rol_id", nullable = false)
-    private Rol rol;
+    @Column(name = "registration_date")
+    private LocalDateTime registrationDate;
 
-    @Column(name = "email_verified", nullable = false)
-    private Boolean emailVerified;
+    @ManyToMany
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id")
+    )
+    List<Rol> roles;
 
-    @Column(name = "active", nullable = false)
-    private Boolean active;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    public User(String firstName, String lastName, String email, String password, String address, String phone, Rol rol) {
+    public User(String firstName, String lastName, String email, String password, String address, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.address = address;
         this.phone = phone;
-        this.rol = rol;
-        this.emailVerified = false;
-        this.active = true;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.registrationDate = LocalDateTime.now();
     }
 }

@@ -25,7 +25,7 @@ public class ProductService {
 
     public Product createProduct(ProductDto productDto) {
         Optional<Category> category = categoryService.getCategoryById(productDto.categoryId());
-        return productRepository.save(new Product(productDto.name(), productDto.description(), productDto.rentalPrice(), productDto.stock(), category.get()));
+        return productRepository.save(new Product(productDto.name(), productDto.description(), category.get(), productDto.rentalPrice(), productDto.stock(), null));
     }
 
     public Optional<Product> getProductById(Integer id){
@@ -35,6 +35,4 @@ public class ProductService {
     public void deleteProduct(Integer id){
         productRepository.deleteById(id);
     }
-
-
 }

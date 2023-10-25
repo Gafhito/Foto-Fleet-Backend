@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 public class Rol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
-    private Integer id;
+    @Column(name = "role_id", nullable = false, unique = true)
+    private Integer roleId;
 
-    @Column(name = "rol", nullable = false)
-    private String rol;
+    @Column(name = "role_name", nullable = false)
+    private String roleName;
 
-    public Rol(String rol) {
-        this.rol = rol;
+    public Rol(String roleName) {
+        this.roleName = roleName;
     }
 }

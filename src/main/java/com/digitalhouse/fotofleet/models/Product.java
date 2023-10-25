@@ -17,42 +17,35 @@ import java.time.LocalDateTime;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
-    private Integer id;
+    @Column(name = "product_id", nullable = false, unique = true)
+    private Integer productId;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description", nullable = false, length = 500)
+    @Column(name = "description")
     private String description;
-
-    @Column(name = "rental_price", nullable = false)
-    private Double rentalPrice;
-
-    @Column(name = "stock", nullable = false)
-    private Integer stock;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     Category category;
 
-    @Column(name = "active", nullable = false)
-    private Boolean active;
+    @Column(name = "rental_price_per_day")
+    private Double rentalPrice;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "stock_quantity", nullable = false)
+    private Integer stock;
 
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    Status status;
 
-    public Product(String name, String description, Double rentalPrice, Integer stock, Category category) {
+    public Product(String name, String description, Category category, Double rentalPrice, Integer stock, Status status) {
         this.name = name;
         this.description = description;
+        this.category = category;
         this.rentalPrice = rentalPrice;
         this.stock = stock;
-        this.category = category;
-        this.active = true;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.status = status;
     }
 }

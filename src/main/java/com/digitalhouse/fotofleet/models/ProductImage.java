@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "products_images")
+@Table(name = "product_images")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,26 +17,22 @@ import java.time.LocalDateTime;
 public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
-    private Integer id;
+    @Column(name = "image_id", nullable = false, unique = true)
+    private Integer imageId;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name = "link", nullable = false)
-    private String link;
+    @Column(name = "image_url", nullable = false)
+    private String imageUrl;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "description")
+    private String description;
 
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    public ProductImage(Product product, String link) {
+    public ProductImage(Product product, String imageUrl, String description) {
         this.product = product;
-        this.link = link;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.imageUrl = imageUrl;
+        this.description = description;
     }
 }
