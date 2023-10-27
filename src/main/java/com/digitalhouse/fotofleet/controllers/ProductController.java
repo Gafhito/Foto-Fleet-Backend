@@ -23,8 +23,8 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<?> getProductById(@RequestParam Integer id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProductById(@PathVariable Integer id) {
        Optional<Product> product = productService.getProductById(id);
        /*return new ResponseEntity<>(product, HttpStatus.OK);*/
         return ResponseEntity.ok(product);

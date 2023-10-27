@@ -18,7 +18,7 @@ public class Category {
     @Column(name = "category_id", nullable = false, unique = true)
     private Integer categoryId;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "category_name", nullable = false)
     private String name;
 
     @Column(name = "description")
