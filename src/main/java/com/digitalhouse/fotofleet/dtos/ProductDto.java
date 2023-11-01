@@ -6,6 +6,7 @@ public record ProductDto(
         Integer categoryId,
         Double rentalPrice,
         Integer stock,
+
         String statusId
 ) {
 }
