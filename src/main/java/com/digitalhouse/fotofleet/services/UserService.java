@@ -1,11 +1,13 @@
 package com.digitalhouse.fotofleet.services;
 
 import com.digitalhouse.fotofleet.dtos.UpdateRolDto;
+import com.digitalhouse.fotofleet.dtos.UserDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Rol;
 import com.digitalhouse.fotofleet.models.User;
 import com.digitalhouse.fotofleet.repositories.UserRepository;
+import com.digitalhouse.fotofleet.security.JwtGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final RolService rolService;
+    private final JwtGenerator jwtGenerator;
 
     public Boolean existUserByEmail(String email) {
         return userRepository.existsByEmail(email);
@@ -51,5 +54,14 @@ public class UserService {
         userRepository.save(user);
 
         return new UpdateRolDto(user.getEmail(), user.getRoles().get(0).getRoleName());
+    }
+
+    public UserDto getProfile(String jwt) throws BadRequestException {
+        String email = jwtGenerator.getEmailOfJwt(jwt.substring(7));
+
+        Optional<User> u = getUserByEmail(email);
+        if (u.isEmpty()) throw new BadRequestException("No existe un usuario con este email");
+
+        return new UserDto(u.get().getFirstName(), u.get().getLastName(), u.get().getEmail(), u.get().getAddress(), u.get().getPhone(), u.get().getRegistrationDate());
     }
 }

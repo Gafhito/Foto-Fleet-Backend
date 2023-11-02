@@ -9,6 +9,7 @@ import com.digitalhouse.fotofleet.models.User;
 import com.digitalhouse.fotofleet.services.AuthService;
 import com.digitalhouse.fotofleet.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -68,13 +69,13 @@ public class AuthController {
         return response;
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<?> updateRol(@RequestBody UpdateRolDto updateRolDto) throws ResourceNotFoundException, BadRequestException {
-        return new ResponseEntity<>(userService.updateRol(updateRolDto), HttpStatus.OK);
-    }
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         return new ResponseEntity<>(authService.login(loginDto), HttpStatus.OK);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateRol(@RequestBody UpdateRolDto updateRolDto) throws ResourceNotFoundException, BadRequestException {
+        return new ResponseEntity<>(userService.updateRol(updateRolDto), HttpStatus.OK);
     }
 }
