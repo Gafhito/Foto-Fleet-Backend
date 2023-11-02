@@ -44,7 +44,8 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.email(), loginDto.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerator.generateToken(authentication);
+        String rol = userService.getRolByUserEmail(loginDto.email());
 
-        return new ResponseLoginDto(token);
+        return new ResponseLoginDto(rol, token);
     }
 }
