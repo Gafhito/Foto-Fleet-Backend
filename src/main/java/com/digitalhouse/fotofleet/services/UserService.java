@@ -1,10 +1,13 @@
 package com.digitalhouse.fotofleet.services;
 
+import com.digitalhouse.fotofleet.models.Rol;
 import com.digitalhouse.fotofleet.models.User;
 import com.digitalhouse.fotofleet.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,5 +25,9 @@ public class UserService {
 
     public User createUser(User user) {
         return userRepository.save(user);
+    }
+
+    public String getRolByUserEmail(String email) {
+        return userRepository.findUserRolesByEmail(email).get(0).getRoleName();
     }
 }
