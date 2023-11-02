@@ -28,7 +28,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    Category category;
+    private Category category;
 
     @Column(name = "rental_price_per_day")
     private Double rentalPrice;
@@ -38,7 +38,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "status_id")
-    Status status;
+    private Status status;
 
     public Product(String name, String description, Category category, Double rentalPrice, Integer stock, Status status) {
         this.name = name;

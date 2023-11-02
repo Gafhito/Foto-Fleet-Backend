@@ -44,13 +44,13 @@ public class User {
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id")
     )
-    List<Rol> roles;
+    private List<Rol> roles;
 
     public User(String firstName, String lastName, String email, String password, String address, String phone) {
         this.firstName = firstName;
