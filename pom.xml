@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.digitalhouse</groupId>
     <artifactId>fotofleet</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>fotofleet</name>
     <description>fotofleet</description>
     <properties>
@@ -115,6 +115,11 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
             </plugin>
         </plugins>
     </build>
