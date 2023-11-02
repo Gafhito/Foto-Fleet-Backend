@@ -1,6 +1,7 @@
 package com.digitalhouse.fotofleet.controllers;
 
 import com.digitalhouse.fotofleet.dtos.ProductDto;
+import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.services.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -23,21 +24,21 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<?> getProductById(@RequestParam Integer id) {
-       Optional<Product> product = productService.getProductById(id);
-       /*return new ResponseEntity<>(product, HttpStatus.OK);*/
-        return ResponseEntity.ok(product);
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Integer id) throws ResourceNotFoundException {
+        ProductDto productDto = productService.getProductById(id);
+        return ResponseEntity.ok(productDto);
     }
 
     @PostMapping
-    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) {
-        Product product = productService.createProduct(productDto);
-        return new ResponseEntity<>(product, HttpStatus.CREATED);
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
+        return ResponseEntity.ok(productService.createProduct(productDto));
+        //Product product = productService.createProduct(productDto);
+        //return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteProduct(@RequestParam Integer id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer id) throws ResourceNotFoundException{
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
