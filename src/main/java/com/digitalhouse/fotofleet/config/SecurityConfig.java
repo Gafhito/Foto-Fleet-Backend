@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/auth/register/user").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/register/moderator").hasAuthority("Admin")
+                .requestMatchers(HttpMethod.POST, "/auth/update").hasAuthority("Admin")
                 .requestMatchers(HttpMethod.GET, "/products").hasAnyAuthority("Admin", "Moderator", "User")
                 .requestMatchers(HttpMethod.GET, "/products/{id}").hasAnyAuthority("Admin", "Moderator", "User")
                 .requestMatchers(HttpMethod.POST, "/products").hasAnyAuthority("Admin", "Moderator")
