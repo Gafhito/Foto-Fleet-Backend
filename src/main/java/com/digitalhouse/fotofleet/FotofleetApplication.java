@@ -9,3 +9,4 @@ public class FotofleetApplication {
         SpringApplication.run(FotofleetApplication.class, args);
     }
 }
+
