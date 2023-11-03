@@ -1,9 +1,7 @@
 package com.digitalhouse.fotofleet.services;
 
 import com.digitalhouse.fotofleet.dtos.ProductDto;
-import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
-import com.digitalhouse.fotofleet.models.Category;
 import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
