@@ -25,7 +25,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable Integer id) throws ResourceNotFoundException {
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Integer id) throws ResourceNotFoundException {
         ProductDto productDto = productService.getProductById(id);
         return ResponseEntity.ok(productDto);
     }
