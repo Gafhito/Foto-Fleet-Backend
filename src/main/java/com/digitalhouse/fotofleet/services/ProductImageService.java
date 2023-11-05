@@ -11,6 +11,10 @@ import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.models.ProductImage;
 import com.digitalhouse.fotofleet.repositories.ProductImageRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.imaging.ImageFormat;
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.Imaging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,9 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,22 +59,31 @@ public class ProductImageService {
         if (product.isEmpty()) throw new ResourceNotFoundException("No existe un producto con este Id");
 
         String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-        String mimeType = file.getContentType();
+        String mimeType = null;
+
+        try {
+            byte[] bytes = file.getBytes();
+            ImageFormat mime = Imaging.guessFormat(bytes);
+            if (mime == ImageFormats.JPEG || mime == ImageFormats.PNG) {
+                mimeType = file.getContentType();
+            } else {
+                mimeType = "NO IMAGE TYPE";
+            }
+        } catch (IOException e) {
+            throw new BadRequestException("Error al procesar la imagen");
+        }
 
         if (
-           extension.equalsIgnoreCase("jpg") ||
-           extension.equalsIgnoreCase("jpeg") ||
-           extension.equalsIgnoreCase("png") &&
-           mimeType.equals("image/jpg") ||
-           mimeType.equals("image/jpeg") ||
-           mimeType.equals("image/png")
+           (extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg") || extension.equalsIgnoreCase("png")) &&
+           (mimeType.equals("image/jpg") || mimeType.equals("image/jpeg") || mimeType.equals("image/png"))
         ) {
             File fileObject = convertMultipartFileToFile(file);
-            String fileName = product.get().getName().concat(LocalDateTime.now().toString()).concat("." + extension).replace(" ", "_").toLowerCase();
+            String fileName = product.get().getName().concat("_" + LocalDateTime.now().toString()).concat("." + extension).replace(" ", "_").toLowerCase();
             s3Client.putObject(new PutObjectRequest(bucket, fileName, fileObject));
 
             S3Object object = s3Client.getObject(bucket, fileName);
             String url = s3Client.getUrl(bucket, object.getKey()).toString();
+            fileObject.delete();
 
             return productImageRepository.save(new ProductImage(product.get(), fileName, url, description));
         } else {
