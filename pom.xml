@@ -15,7 +15,9 @@
     <description>fotofleet</description>
     <properties>
         <java.version>17</java.version>
+        <spring-cloud.version>Hoxton.SR4</spring-cloud.version>  <!-- Versión necesaria para utilizar SDK de AWS -->
     </properties>
+
     <dependencies>
         <!-- :::::::::::::::::::::::::::::: Dependencias Web :::::::::::::::::::::::::::::: -->
         <dependency>
@@ -34,6 +36,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-aws</artifactId>
+        </dependency>
+
+        <!-- :::::::::::::::::::::::::::::: Dependencias de Desarrollo :::::::::::::::::::::::::::::: -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -102,6 +110,20 @@
             <version>2.4.0-b180830.0359</version>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- Manejador de dependencia customizada para hacer uso de Spring Cloud con SDK de AWS -->
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>

@@ -40,6 +40,10 @@ public class ProductService {
         return mapper.convertValue(productRepository.save(product), ProductDto.class);
     }
 
+    public Optional<Product> getById(Integer id) {
+        return productRepository.findById(id);
+    }
+
     public ProductDto getProductById(Integer id) throws ResourceNotFoundException {
         Optional<Product> product = productRepository.findById(id);
         if(product.isEmpty()){

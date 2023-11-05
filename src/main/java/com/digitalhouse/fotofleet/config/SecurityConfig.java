@@ -78,6 +78,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/products/{id}").hasAnyAuthority("Admin", "Moderator", "User")
                 .requestMatchers(HttpMethod.POST, "/products").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.DELETE, "/products").hasAnyAuthority("Admin", "Moderator")
+                .requestMatchers(HttpMethod.POST, "/images").hasAnyAuthority("Admin", "Moderator")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();

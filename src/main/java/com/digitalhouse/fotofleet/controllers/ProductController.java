@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
@@ -32,9 +30,7 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
-        return ResponseEntity.ok(productService.createProduct(productDto));
-        //Product product = productService.createProduct(productDto);
-        //return new ResponseEntity<>(product, HttpStatus.CREATED);
+        return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
