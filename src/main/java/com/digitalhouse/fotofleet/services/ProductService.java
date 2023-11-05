@@ -1,5 +1,6 @@
 package com.digitalhouse.fotofleet.services;
 
+import com.digitalhouse.fotofleet.dtos.ImageDto;
 import com.digitalhouse.fotofleet.dtos.ProductDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,10 +48,9 @@ public class ProductService {
 
     public ProductDto getProductById(Integer id) throws ResourceNotFoundException {
         Optional<Product> product = productRepository.findById(id);
-        if(product.isEmpty()){
-            throw new ResourceNotFoundException("No existe un producto con el ID: " + id);
-        }
-        return mapper.convertValue(product, ProductDto.class);
+        if(product.isEmpty()) throw new ResourceNotFoundException("No existe un producto con este ID");
+
+        return new ProductDto(product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock());
     }
 
     public void deleteProduct(Integer id) throws ResourceNotFoundException{
@@ -66,4 +67,8 @@ public class ProductService {
         Product product = mapper.convertValue(productDto, Product.class);
         return mapper.convertValue(productRepository.save(product), ProductDto.class);
     }*/
+
+    public void existsProductById(Integer id) throws ResourceNotFoundException {
+        if (!productRepository.existsById(id)) throw new ResourceNotFoundException("No existe un producto con este ID");
+    }
 }

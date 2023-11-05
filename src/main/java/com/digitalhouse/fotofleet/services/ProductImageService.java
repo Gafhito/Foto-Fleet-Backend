@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
+import com.digitalhouse.fotofleet.dtos.ImageDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Product;
@@ -21,6 +22,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,6 +35,21 @@ public class ProductImageService {
     private final AmazonS3 s3Client;
     @Value("${aws.bucket}")
     private String bucket;
+
+    public List<ImageDto> listImagesByProductId(Integer productId) throws ResourceNotFoundException {
+        productService.existsProductById(productId);
+
+        List<ProductImage> productImages = productImageRepository.listByProductId(productId);
+        List<ImageDto> imageDtos = new ArrayList<>();
+
+        if (!productImages.isEmpty()) {
+            for (ProductImage productImage : productImages) {
+                imageDtos.add(new ImageDto(productImage.getImageUrl(), productImage.getDescription()));
+            }
+        }
+
+        return imageDtos;
+    }
 
     public ProductImage uploadFile(Integer productId, MultipartFile file, String description) throws BadRequestException, ResourceNotFoundException {
         Optional<Product> product = productService.getById(productId);
