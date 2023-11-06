@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -22,12 +21,15 @@ public class CategoryService {
     @Autowired
     ObjectMapper mapper;
 
-    public CategoryDto getCategoryById(Integer id) throws ResourceNotFoundException {
+    /*public CategoryDto getCategoryById(Integer id) throws ResourceNotFoundException {
         Optional<Category> category = categoryRepository.findById(id);
         if(category.isEmpty()){
             throw new ResourceNotFoundException("No existe categoría con ID: " + id);
         }
         return mapper.convertValue(category, CategoryDto.class);
+    }*/
+    public Optional<Category> getCategoryById(Integer id) {
+        return categoryRepository.findById(id);
     }
 
     public CategoryDto createCategory(CategoryDto categoryDto){
@@ -36,7 +38,7 @@ public class CategoryService {
     }
 
     public void deleteCategory(Integer id) throws ResourceNotFoundException {
-        if(getCategoryById(id) == null){
+        if(getCategoryById(id).isEmpty()){
             throw new ResourceNotFoundException("No existe categoría con ID: " + id);
         }
         categoryRepository.deleteById(id);

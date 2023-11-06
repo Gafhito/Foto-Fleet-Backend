@@ -1,6 +1,7 @@
 package com.digitalhouse.fotofleet.controllers;
 
 import com.digitalhouse.fotofleet.dtos.ProductDto;
+import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.services.ProductService;
@@ -25,21 +26,25 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDto> getProductById(@PathVariable Integer id) throws ResourceNotFoundException {
+    public ResponseEntity<?> getProductById(@PathVariable Integer id) throws ResourceNotFoundException {
         ProductDto productDto = productService.getProductById(id);
         return ResponseEntity.ok(productDto);
     }
 
     @PostMapping
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
-        return ResponseEntity.ok(productService.createProduct(productDto));
-        //Product product = productService.createProduct(productDto);
-        //return new ResponseEntity<>(product, HttpStatus.CREATED);
+    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) throws ResourceNotFoundException{
+        Product product = productService.createProduct(productDto);
+        return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Integer id) throws ResourceNotFoundException{
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody ProductDto productDto) throws BadRequestException {
+        return new ResponseEntity<>(productService.updateProduct(id, productDto),HttpStatus.OK);
     }
 }

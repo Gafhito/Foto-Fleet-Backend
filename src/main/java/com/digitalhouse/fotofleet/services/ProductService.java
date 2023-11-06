@@ -30,22 +30,21 @@ public class ProductService {
         return productRepository.listAllProducts(pageable);
     }
 
-    /* public Product createProduct(ProductDto productDto) {
+    public Product createProduct(ProductDto productDto) throws ResourceNotFoundException {
         Optional<Category> category = categoryService.getCategoryById(productDto.categoryId());
-        return productRepository.save(new Product(productDto.name(), productDto.description(), category.get(), productDto.rentalPrice(), productDto.stock(), null));
-    }*/
+        if (category.isEmpty()) throw new ResourceNotFoundException("No existe categoría con ID: " + productDto.categoryId());
 
-    public ProductDto createProduct(ProductDto productDto){
-        Product product = mapper.convertValue(productDto, Product.class);
-        return mapper.convertValue(productRepository.save(product), ProductDto.class);
+        Product product = new Product(productDto.name(), productDto.description(), category.get(), productDto.rentalPrice(), productDto.stock(), null);
+
+        return productRepository.save(product);
     }
 
     public ProductDto getProductById(Integer id) throws ResourceNotFoundException {
-        Optional<Product> product = productRepository.findById(id);
-        if(product.isEmpty()){
+        Optional<Product> p = productRepository.findById(id);
+        if(p.isEmpty()){
             throw new ResourceNotFoundException("No existe un producto con el ID: " + id);
         }
-        return mapper.convertValue(product, ProductDto.class);
+        return new ProductDto(p.get().getName(), p.get().getDescription(),p.get().getCategory().getCategoryId(),p.get().getRentalPrice(),p.get().getStock(),null);
     }
 
     public void deleteProduct(Integer id) throws ResourceNotFoundException{
@@ -55,11 +54,23 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    /*public ProductDto updateProduct(ProductDto productDto) throws BadRequestException{
-        if(productRepository.findById(productDto.getId()).isEmpty()){
-            throw new BadRequestException("No es posible actualizar el producto con ID: " + productDto.getId() + ", porque no está registrado");
+    public Product updateProduct(Integer id,ProductDto productDto) throws BadRequestException{
+        Optional<Category> category = categoryService.getCategoryById(productDto.categoryId());
+        Optional<Product> p = productRepository.findById(id);
+        if(p.isEmpty()){
+            throw new BadRequestException("No es posible actualizar el producto con ID: " + productDto + ", porque no está registrado");
         }
+        Product product = p.get();
+        product.setName(productDto.name());
+        product.setDescription(productDto.description());
+        product.setCategory(category.get());
+        product.setRentalPrice(productDto.rentalPrice());
+        product.setStock(productDto.stock());
+        //product.setStatus();
+        return productRepository.save(product);
+        /*
         Product product = mapper.convertValue(productDto, Product.class);
         return mapper.convertValue(productRepository.save(product), ProductDto.class);
-    }*/
+        */
+    }
 }
