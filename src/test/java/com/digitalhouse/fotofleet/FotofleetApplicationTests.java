@@ -9,3 +9,4 @@ class FotofleetApplicationTests {
     void contextLoads() {
     }
 }
+

@@ -69,6 +69,8 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
+                .requestMatchers( "/doc/swagger-ui/**").permitAll()
+                .requestMatchers( "/v3/api-docs/**").permitAll()
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/auth/register/user").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/register/moderator").hasAuthority("Admin")

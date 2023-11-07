@@ -34,11 +34,6 @@ public class ProductController {
         return new ResponseEntity<>(productService.getDtoByProductId(id), HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) throws BadRequestException {
-        return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
-    }
-
     @PostMapping("/images")
     public ResponseEntity<?> uploadImages(@RequestParam Integer productId, @RequestParam MultipartFile primaryImage, @RequestParam List<MultipartFile> secondaryImages) throws BadRequestException {
         Optional<Product> product = productService.getById(productId);
@@ -47,11 +42,20 @@ public class ProductController {
         productImageService.uploadImagesForProduct(product.get(), primaryImage, secondaryImages);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+
+    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) throws ResourceNotFoundException{
+        Product product = productService.createProduct(productDto);
+        return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Integer id) throws ResourceNotFoundException{
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
+        return new ResponseEntity<>(productService.updateProduct(id, productDto),HttpStatus.OK);
     }
 }

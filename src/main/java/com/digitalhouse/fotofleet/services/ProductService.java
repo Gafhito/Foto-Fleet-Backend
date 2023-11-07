@@ -8,9 +8,7 @@ import com.digitalhouse.fotofleet.models.Category;
 import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.models.Status;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,14 +20,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService {
+public class  ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final StatusService statusService;
     private final ProductImageService productImageService;
 
-    @Autowired
-    ObjectMapper mapper;
 
     public Page<Product> listAllProducts(Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
@@ -64,16 +60,25 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
-
-    /*public ProductDto updateProduct(ProductDto productDto) throws BadRequestException{
-        if(productRepository.findById(productDto.getId()).isEmpty()){
-            throw new BadRequestException("No es posible actualizar el producto con ID: " + productDto.getId() + ", porque no está registrado");
-        }
-        Product product = mapper.convertValue(productDto, Product.class);
-        return mapper.convertValue(productRepository.save(product), ProductDto.class);
-    }*/
-
+  
     public void existsProductById(Integer id) throws ResourceNotFoundException {
         if (!productRepository.existsById(id)) throw new ResourceNotFoundException("No existe un producto con este ID");
+    }
+
+    public Product updateProduct(Integer id,ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
+        Optional<Category> category = categoryService.getCategoryById(productDto.categoryId());
+        Optional<Product> p = productRepository.findById(id);
+        if(p.isEmpty()){
+            throw new BadRequestException("No es posible actualizar el producto con ID: " + id + ", porque no está registrado");
+        }
+      
+        Product product = p.get();
+        product.setName(productDto.name());
+        product.setDescription(productDto.description());
+        product.setCategory(category.get());
+        product.setRentalPrice(productDto.rentalPrice());
+        product.setStock(productDto.stock());
+        //product.setStatus();
+        return productRepository.save(product);
     }
 }
