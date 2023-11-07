@@ -28,13 +28,13 @@ public class ProductImage {
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "is_primary")
+    private Boolean primary;
 
-    public ProductImage(Product product, String fileName, String imageUrl, String description) {
+    public ProductImage(Product product, String fileName, String imageUrl, Boolean primary) {
         this.product = product;
         this.fileName = fileName;
         this.imageUrl = imageUrl;
-        this.description = description;
+        this.primary = primary;
     }
 }

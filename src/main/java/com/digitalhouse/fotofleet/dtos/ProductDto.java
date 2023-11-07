@@ -8,14 +8,14 @@ public record ProductDto(
         Integer categoryId,
         Double rentalPrice,
         Integer stock,
-        String statusId,
+        String status,
         List<ImageDto> images
 ) {
     public ProductDto(String name, String description, Integer categoryId, Double rentalPrice, Integer stock) {
         this(name, description, categoryId, rentalPrice, stock, null, null);
     }
 
-    public ProductDto(String name, String description, Integer categoryId, Double rentalPrice, Integer stock, String statusId) {
-        this(name, description, categoryId, rentalPrice, stock, statusId, null);
+    public ProductDto(String name, String description, Integer categoryId, Double rentalPrice, Integer stock, String status) {
+        this(name, description, categoryId, rentalPrice, stock, status, null);
     }
 }

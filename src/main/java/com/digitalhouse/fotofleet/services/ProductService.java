@@ -6,6 +6,7 @@ import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Category;
 import com.digitalhouse.fotofleet.models.Product;
+import com.digitalhouse.fotofleet.models.Status;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,8 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final StatusService statusService;
+    private final ProductImageService productImageService;
 
     @Autowired
     ObjectMapper mapper;
@@ -32,29 +36,30 @@ public class ProductService {
         return productRepository.listAllProducts(pageable);
     }
 
-    /* public Product createProduct(ProductDto productDto) {
+    @Transactional(rollbackFor = Exception.class)
+    public Product createProduct(ProductDto productDto) throws BadRequestException {
         Optional<Category> category = categoryService.getCategoryById(productDto.categoryId());
-        return productRepository.save(new Product(productDto.name(), productDto.description(), category.get(), productDto.rentalPrice(), productDto.stock(), null));
-    }*/
+        Optional<Status> status = statusService.getStatusByName("Active");
+        if (category.isEmpty()) throw new BadRequestException("No existe la categoría especificada");
 
-    public ProductDto createProduct(ProductDto productDto){
-        Product product = mapper.convertValue(productDto, Product.class);
-        return mapper.convertValue(productRepository.save(product), ProductDto.class);
+        return productRepository.save(new Product(productDto.name(), productDto.description(), category.get(), productDto.rentalPrice(), productDto.stock(), status.get()));
     }
 
     public Optional<Product> getById(Integer id) {
         return productRepository.findById(id);
     }
 
-    public ProductDto getProductById(Integer id) throws ResourceNotFoundException {
+    public ProductDto getDtoByProductId(Integer id) throws ResourceNotFoundException {
         Optional<Product> product = productRepository.findById(id);
         if(product.isEmpty()) throw new ResourceNotFoundException("No existe un producto con este ID");
 
-        return new ProductDto(product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock());
+        List<ImageDto> imageDtos = productImageService.listImagesByProductId(id);
+
+        return new ProductDto(product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos);
     }
 
     public void deleteProduct(Integer id) throws ResourceNotFoundException{
-        if(getProductById(id) == null){
+        if(getDtoByProductId(id) == null){
             throw new ResourceNotFoundException("No existe el producto con ID: " + id);
         }
         productRepository.deleteById(id);
