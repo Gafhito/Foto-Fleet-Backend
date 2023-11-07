@@ -33,7 +33,7 @@ public class  ProductService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Product createProduct(ProductDto productDto) throws BadRequestException {
+    public Product createProduct(ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
         Optional<Category> category = categoryService.getCategoryById(productDto.categoryId());
         Optional<Status> status = statusService.getStatusByName("Active");
         if (category.isEmpty()) throw new BadRequestException("No existe la categoría especificada");

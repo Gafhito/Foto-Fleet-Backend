@@ -42,8 +42,10 @@ public class ProductController {
         productImageService.uploadImagesForProduct(product.get(), primaryImage, secondaryImages);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
-    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) throws ResourceNotFoundException{
+    @PostMapping
+    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
         Product product = productService.createProduct(productDto);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
