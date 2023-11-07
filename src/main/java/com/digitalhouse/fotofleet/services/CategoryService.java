@@ -1,6 +1,7 @@
 package com.digitalhouse.fotofleet.services;
 
 import com.digitalhouse.fotofleet.dtos.CategoryDto;
+import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Category;
 import com.digitalhouse.fotofleet.repositories.CategoryRepository;
@@ -28,13 +29,21 @@ public class CategoryService {
         }
         return mapper.convertValue(category, CategoryDto.class);
     }*/
-    public Optional<Category> getCategoryById(Integer id) {
+    public Optional<Category> getCategoryById(Integer id) throws ResourceNotFoundException {
+        if(categoryRepository.findById(id).isEmpty()){
+            throw new ResourceNotFoundException("No existe una categoría registrada con ID: " + id);
+        }
         return categoryRepository.findById(id);
     }
+    /*public CategoryDto getCategoryById(Integer id) {
+        Optional<Category> c = categoryRepository.findById(id);
+        return new CategoryDto(c.get().getName(),c.get().getDescription());
+    }*/
 
-    public CategoryDto createCategory(CategoryDto categoryDto){
-        Category category = mapper.convertValue(categoryDto, Category.class);
-        return mapper.convertValue(categoryRepository.save(category), CategoryDto.class);
+
+    public Category createCategory(CategoryDto categoryDto){
+        Category c = new Category(categoryDto.name(),categoryDto.description());
+        return categoryRepository.save(c);
     }
 
     public void deleteCategory(Integer id) throws ResourceNotFoundException {
@@ -52,6 +61,18 @@ public class CategoryService {
             listCategoriesDto.add(mapper.convertValue(c, CategoryDto.class));
         }
         return listCategoriesDto;
+    }
+
+    public Category updateCategory(Integer id, CategoryDto categoryDto) throws BadRequestException{
+        Optional<Category> c = categoryRepository.findById(id);
+        if(c.isEmpty()){
+            throw new BadRequestException("No es posible modificar la categoría con ID: " + id + "porque no está registrada" );
+        }
+        Category category = c.get();
+        category.setName(categoryDto.name());
+        category.setDescription(categoryDto.description());
+
+        return categoryRepository.save(category);
     }
 
 

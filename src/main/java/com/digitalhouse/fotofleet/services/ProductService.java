@@ -6,24 +6,19 @@ import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Category;
 import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService {
+public class  ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
 
-    @Autowired
-    ObjectMapper mapper;
 
     public Page<Product> listAllProducts(Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
@@ -54,11 +49,11 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public Product updateProduct(Integer id,ProductDto productDto) throws BadRequestException{
+    public Product updateProduct(Integer id,ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
         Optional<Category> category = categoryService.getCategoryById(productDto.categoryId());
         Optional<Product> p = productRepository.findById(id);
         if(p.isEmpty()){
-            throw new BadRequestException("No es posible actualizar el producto con ID: " + productDto + ", porque no está registrado");
+            throw new BadRequestException("No es posible actualizar el producto con ID: " + id + ", porque no está registrado");
         }
         Product product = p.get();
         product.setName(productDto.name());
@@ -68,9 +63,5 @@ public class ProductService {
         product.setStock(productDto.stock());
         //product.setStatus();
         return productRepository.save(product);
-        /*
-        Product product = mapper.convertValue(productDto, Product.class);
-        return mapper.convertValue(productRepository.save(product), ProductDto.class);
-        */
     }
 }

@@ -44,7 +44,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody ProductDto productDto) throws BadRequestException {
+    public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
         return new ResponseEntity<>(productService.updateProduct(id, productDto),HttpStatus.OK);
     }
 }
