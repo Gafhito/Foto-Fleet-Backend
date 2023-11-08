@@ -36,12 +36,11 @@ public class ProductImageService {
     @Value("${aws.bucket}")
     private String bucket;
 
-    public List<ImageDto> listImagesByProductId(Integer productId) throws ResourceNotFoundException {
+    public List<ImageDto> listImagesByProductId(Integer productId) {
         List<ProductImage> productImages = productImageRepository.listByProductId(productId);
         List<ImageDto> imageDtos = new ArrayList<>();
 
-        if (productImages.isEmpty()) throw new ResourceNotFoundException("No existen imágenes para el producto con este ID");
-        else {
+        if (!productImages.isEmpty()) {
             for (ProductImage productImage : productImages) {
                 imageDtos.add(new ImageDto(productImage.getImageUrl(), productImage.getPrimary()));
             }

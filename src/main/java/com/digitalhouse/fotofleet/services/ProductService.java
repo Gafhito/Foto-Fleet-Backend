@@ -9,7 +9,6 @@ import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.models.Status;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,8 +26,7 @@ public class  ProductService {
     private final StatusService statusService;
     private final ProductImageService productImageService;
 
-
-    public List<ProductDto> listAllProducts(Integer page) throws ResourceNotFoundException {
+    public List<ProductDto> listAllProducts(Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
         List<Product> products = productRepository.listAllProducts(pageable).getContent();
         List<ProductDto> productDtos = new ArrayList<>();
@@ -43,11 +41,10 @@ public class  ProductService {
 
     @Transactional(rollbackFor = Exception.class)
     public Product createProduct(ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
-        Optional<Category> category = categoryService.getCategoryById(productDto.categoryId());
+        Category category = categoryService.getCategoryById(productDto.categoryId());
         Optional<Status> status = statusService.getStatusByName("Active");
-        if (category.isEmpty()) throw new BadRequestException("No existe la categoría especificada");
 
-        return productRepository.save(new Product(productDto.name(), productDto.description(), category.get(), productDto.rentalPrice(), productDto.stock(), status.get()));
+        return productRepository.save(new Product(productDto.name(), productDto.description(), category, productDto.rentalPrice(), productDto.stock(), status.get()));
     }
 
     public Optional<Product> getById(Integer id) {
@@ -74,20 +71,21 @@ public class  ProductService {
         if (!productRepository.existsById(id)) throw new ResourceNotFoundException("No existe un producto con este ID");
     }
 
-    public Product updateProduct(Integer id,ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
-        Optional<Category> category = categoryService.getCategoryById(productDto.categoryId());
+    public Product updateProduct(Integer id, ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
+        Category category = categoryService.getCategoryById(productDto.categoryId());
         Optional<Product> p = productRepository.findById(id);
-        if(p.isEmpty()){
-            throw new BadRequestException("No es posible actualizar el producto con ID: " + id + ", porque no está registrado");
-        }
+        Optional<Status> status = statusService.getStatusByName(productDto.status());
+
+        if (p.isEmpty()) throw new BadRequestException("No es posible actualizar el producto con ID: " + id + ", porque no está registrado");
+        if (status.isEmpty()) throw new ResourceNotFoundException("No existe un status con el nombre de: " + productDto.status());
       
         Product product = p.get();
         product.setName(productDto.name());
         product.setDescription(productDto.description());
-        product.setCategory(category.get());
+        product.setCategory(category);
         product.setRentalPrice(productDto.rentalPrice());
         product.setStock(productDto.stock());
-        //product.setStatus();
+        product.setStatus(status.get());
         return productRepository.save(product);
     }
 }
