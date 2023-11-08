@@ -24,9 +24,8 @@ public class ProductController {
     private final ProductImageService productImageService;
 
     @GetMapping
-    public ResponseEntity<?> getAllProducts(@RequestParam Integer page) {
-        Page<Product> products = productService.listAllProducts(page);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+    public ResponseEntity<?> getAllProducts(@RequestParam Integer page) throws ResourceNotFoundException {
+        return new ResponseEntity<>(productService.listAllProducts(page), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

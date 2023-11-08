@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,9 +28,17 @@ public class  ProductService {
     private final ProductImageService productImageService;
 
 
-    public Page<Product> listAllProducts(Integer page) {
+    public List<ProductDto> listAllProducts(Integer page) throws ResourceNotFoundException {
         Pageable pageable = PageRequest.of(page, 10);
-        return productRepository.listAllProducts(pageable);
+        List<Product> products = productRepository.listAllProducts(pageable).getContent();
+        List<ProductDto> productDtos = new ArrayList<>();
+
+        for (Product p : products) {
+            List<ImageDto> images = productImageService.listImagesByProductId(p.getProductId());
+            productDtos.add(new ProductDto(p.getName(), p.getDescription(), p.getCategory().getCategoryId(), p.getRentalPrice(), p.getStock(), p.getStatus().getName(), images));
+        }
+
+        return productDtos;
     }
 
     @Transactional(rollbackFor = Exception.class)
