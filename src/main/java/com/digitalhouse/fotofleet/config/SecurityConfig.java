@@ -76,10 +76,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/auth/register/moderator").hasAuthority("Admin")
                 .requestMatchers(HttpMethod.POST, "/auth/update").hasAuthority("Admin")
                 .requestMatchers(HttpMethod.GET, "/user").hasAnyAuthority("Admin", "Moderator", "User")
-                .requestMatchers(HttpMethod.GET, "/products").hasAnyAuthority("Admin", "Moderator", "User")
-                .requestMatchers(HttpMethod.GET, "/products/{id}").hasAnyAuthority("Admin", "Moderator", "User")
+                .requestMatchers(HttpMethod.GET, "/products").permitAll()
+                .requestMatchers(HttpMethod.GET, "/products/{id}").permitAll()
                 .requestMatchers(HttpMethod.POST, "/products").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.DELETE, "/products").hasAnyAuthority("Admin", "Moderator")
+                .requestMatchers(HttpMethod.POST, "/products/images").hasAnyAuthority("Admin", "Moderator")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
