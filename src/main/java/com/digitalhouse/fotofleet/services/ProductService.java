@@ -88,4 +88,15 @@ public class  ProductService {
         product.setStatus(status.get());
         return productRepository.save(product);
     }
-}
+    public List<Product> search(String filter) throws Exception {
+        try {
+            List<Product> products = productRepository.findByNameContaining(filter);
+            return products;
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+    }
+
+
