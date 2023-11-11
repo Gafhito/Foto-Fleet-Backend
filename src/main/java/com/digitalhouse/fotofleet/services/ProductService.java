@@ -35,7 +35,7 @@ public class  ProductService {
 
         for (Product p : products) {
             List<ImageDto> images = productImageService.listImagesByProductId(p.getProductId());
-            productDtos.add(new ProductDto(p.getName(), p.getDescription(), p.getCategory().getCategoryId(), p.getRentalPrice(), p.getStock(), p.getStatus().getName(), images));
+            productDtos.add(new ProductDto(p.getName(), p.getDescription(), p.getCategory().getCategoryId(), p.getRentalPrice(), p.getStock(), p.getStatus().getName(), images, p.getCharacteristics()));
         }
 
         return productDtos;
@@ -47,7 +47,7 @@ public class  ProductService {
         Optional<Status> status = statusService.getStatusByName("Active");
         if (category.isEmpty()) throw new BadRequestException("No existe la categoría especificada");
 
-        return productRepository.save(new Product(productDto.name(), productDto.description(), category.get(), productDto.rentalPrice(), productDto.stock(), status.get()));
+        return productRepository.save(new Product(productDto.name(), productDto.description(), category.get(), productDto.rentalPrice(), productDto.stock(), status.get(), productDto.characteristics()));
     }
 
     public Optional<Product> getById(Integer id) {
@@ -60,7 +60,7 @@ public class  ProductService {
 
         List<ImageDto> imageDtos = productImageService.listImagesByProductId(id);
 
-        return new ProductDto(product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos);
+        return new ProductDto(product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos, product.get().getCharacteristics());
     }
 
     public void deleteProduct(Integer id) throws ResourceNotFoundException{

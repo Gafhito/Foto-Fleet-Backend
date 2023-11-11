@@ -49,7 +49,7 @@ public class Product {
     )
     private List<Characteristics> characteristics;
 
-    /*public Product(String name, String description, Category category, Double rentalPrice, Integer stock, Status status, List<Characteristics> characteristics) {
+    public Product(String name, String description, Category category, Double rentalPrice, Integer stock, Status status, List<Characteristics> characteristics) {
         this.name = name;
         this.description = description;
         this.category = category;
@@ -57,14 +57,5 @@ public class Product {
         this.stock = stock;
         this.status = status;
         this.characteristics = characteristics;
-    }*/
-
-    public Product(String name, String description, Category category, Double rentalPrice, Integer stock, Status status) {
-        this.name = name;
-        this.description = description;
-        this.category = category;
-        this.rentalPrice = rentalPrice;
-        this.stock = stock;
-        this.status = status;
     }
 }
