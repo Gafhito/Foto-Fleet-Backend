@@ -41,10 +41,13 @@ public class  ProductService {
 
     @Transactional(rollbackFor = Exception.class)
     public Product createProduct(ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
+        Optional<Product> product = getProductByName(productDto.name().trim());
+        if (product.isPresent()) throw new BadRequestException("Error, ya existe un producto registrado con este nombre");
+
         Category category = categoryService.getCategoryById(productDto.categoryId());
         Optional<Status> status = statusService.getStatusByName("Active");
 
-        return productRepository.save(new Product(productDto.name(), productDto.description(), category, productDto.rentalPrice(), productDto.stock(), status.get()));
+        return productRepository.save(new Product(productDto.name().trim(), productDto.description().trim(), category, productDto.rentalPrice(), productDto.stock(), status.get()));
     }
 
     public Optional<Product> getById(Integer id) {
@@ -58,6 +61,10 @@ public class  ProductService {
         List<ImageDto> imageDtos = productImageService.listImagesByProductId(id);
 
         return new ProductDto(product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos);
+    }
+
+    public Optional<Product> getProductByName(String name) {
+        return productRepository.findByName(name);
     }
 
     public void deleteProduct(Integer id) throws ResourceNotFoundException{
