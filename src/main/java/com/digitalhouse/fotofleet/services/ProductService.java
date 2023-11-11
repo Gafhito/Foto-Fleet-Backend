@@ -33,7 +33,7 @@ public class  ProductService {
 
         for (Product p : products) {
             List<ImageDto> images = productImageService.listImagesByProductId(p.getProductId());
-            productDtos.add(new ProductDto(p.getName(), p.getDescription(), p.getCategory().getCategoryId(), p.getRentalPrice(), p.getStock(), p.getStatus().getName(), images));
+            productDtos.add(new ProductDto(p.getProductId(),p.getName(), p.getDescription(), p.getCategory().getCategoryId(), p.getRentalPrice(), p.getStock(), p.getStatus().getName(), images));
         }
 
         return productDtos;
@@ -57,7 +57,7 @@ public class  ProductService {
 
         List<ImageDto> imageDtos = productImageService.listImagesByProductId(id);
 
-        return new ProductDto(product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos);
+        return new ProductDto(product.get().getProductId(),product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos);
     }
 
     public void deleteProduct(Integer id) throws ResourceNotFoundException{
