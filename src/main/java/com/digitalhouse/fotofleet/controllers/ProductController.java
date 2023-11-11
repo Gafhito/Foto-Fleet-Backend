@@ -59,4 +59,14 @@ public class ProductController {
     public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
         return new ResponseEntity<>(productService.updateProduct(id, productDto),HttpStatus.OK);
     }
-}
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam String filter) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(productService.search(filter));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(("{\"error\": \"" +e.getMessage()+"\"}"));
+        }
+        }
+    }

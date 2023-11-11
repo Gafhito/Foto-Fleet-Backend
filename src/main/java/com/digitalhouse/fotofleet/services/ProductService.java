@@ -9,6 +9,8 @@ import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.models.Status;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,17 +28,20 @@ public class  ProductService {
     private final StatusService statusService;
     private final ProductImageService productImageService;
 
-    public List<ProductDto> listAllProducts(Integer page) {
+    public Page<ProductDto> listAllProducts(Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
-        List<Product> products = productRepository.listAllProducts(pageable).getContent();
+        List<Product> products = productRepository.findAll();
         List<ProductDto> productDtos = new ArrayList<>();
 
         for (Product p : products) {
             List<ImageDto> images = productImageService.listImagesByProductId(p.getProductId());
-            productDtos.add(new ProductDto(p.getName(), p.getDescription(), p.getCategory().getCategoryId(), p.getRentalPrice(), p.getStock(), p.getStatus().getName(), images));
+            productDtos.add(new ProductDto(p.getProductId(), p.getName(), p.getDescription(), p.getCategory().getCategoryId(), p.getRentalPrice(), p.getStock(), p.getStatus().getName(), images));
         }
 
-        return productDtos;
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), productDtos.size());
+
+        return new PageImpl<>(productDtos.subList(start, end), pageable, productDtos.size());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -60,7 +65,7 @@ public class  ProductService {
 
         List<ImageDto> imageDtos = productImageService.listImagesByProductId(id);
 
-        return new ProductDto(product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos);
+        return new ProductDto(product.get().getProductId(),product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos);
     }
 
     public Optional<Product> getProductByName(String name) {
@@ -95,4 +100,15 @@ public class  ProductService {
         product.setStatus(status.get());
         return productRepository.save(product);
     }
-}
+    public List<Product> search(String filter) throws Exception {
+        try {
+            List<Product> products = productRepository.findByNameContaining(filter);
+            return products;
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+    }
+
+
