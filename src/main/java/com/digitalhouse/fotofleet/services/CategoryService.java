@@ -22,24 +22,12 @@ public class CategoryService {
     @Autowired
     ObjectMapper mapper;
 
-    /*public CategoryDto getCategoryById(Integer id) throws ResourceNotFoundException {
-        Optional<Category> category = categoryRepository.findById(id);
-        if(category.isEmpty()){
-            throw new ResourceNotFoundException("No existe categoría con ID: " + id);
-        }
-        return mapper.convertValue(category, CategoryDto.class);
-    }*/
     public Optional<Category> getCategoryById(Integer id) throws ResourceNotFoundException {
         if(categoryRepository.findById(id).isEmpty()){
             throw new ResourceNotFoundException("No existe una categoría registrada con ID: " + id);
         }
         return categoryRepository.findById(id);
     }
-    /*public CategoryDto getCategoryById(Integer id) {
-        Optional<Category> c = categoryRepository.findById(id);
-        return new CategoryDto(c.get().getName(),c.get().getDescription());
-    }*/
-
 
     public Category createCategory(CategoryDto categoryDto){
         Category c = new Category(categoryDto.name(),categoryDto.description());
