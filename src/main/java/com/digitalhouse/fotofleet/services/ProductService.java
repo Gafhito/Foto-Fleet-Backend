@@ -5,6 +5,7 @@ import com.digitalhouse.fotofleet.dtos.ProductDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Category;
+import com.digitalhouse.fotofleet.models.Characteristics;
 import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.models.Status;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
@@ -35,7 +36,7 @@ public class  ProductService {
 
         for (Product p : products) {
             List<ImageDto> images = productImageService.listImagesByProductId(p.getProductId());
-            productDtos.add(new ProductDto(p.getProductId(), p.getName(), p.getDescription(), p.getCategory().getCategoryId(), p.getRentalPrice(), p.getStock(), p.getStatus().getName(), images));
+            productDtos.add(new ProductDto(p.getProductId(), p.getName(), p.getDescription(), p.getCategory().getCategoryId(), p.getRentalPrice(), p.getStock(), p.getStatus().getName(), images, p.getCharacteristics()));
         }
 
         int start = (int) pageable.getOffset();
@@ -52,7 +53,7 @@ public class  ProductService {
         Category category = categoryService.getCategoryById(productDto.categoryId());
         Optional<Status> status = statusService.getStatusByName("Active");
 
-        return productRepository.save(new Product(productDto.name().trim(), productDto.description().trim(), category, productDto.rentalPrice(), productDto.stock(), status.get()));
+        return productRepository.save(new Product(productDto.name().trim(), productDto.description().trim(), category, productDto.rentalPrice(), productDto.stock(), status.get(), productDto.characteristics()));
     }
 
     public Optional<Product> getById(Integer id) {
@@ -65,7 +66,7 @@ public class  ProductService {
 
         List<ImageDto> imageDtos = productImageService.listImagesByProductId(id);
 
-        return new ProductDto(product.get().getProductId(),product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos);
+        return new ProductDto(product.get().getProductId(),product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos, product.get().getCharacteristics());
     }
 
     public Optional<Product> getProductByName(String name) {
@@ -100,6 +101,14 @@ public class  ProductService {
         product.setStatus(status.get());
         return productRepository.save(product);
     }
+
+    public Product updateProductWhithCharacteristics(Product product) throws ResourceNotFoundException, BadRequestException {
+        getDtoByProductId(product.getProductId());
+        if (product.getCharacteristics().isEmpty()) throw new BadRequestException("Error, el listado de características no puede estar vacío");
+
+        return productRepository.save(product);
+    }
+
     public List<Product> search(String filter) throws Exception {
         try {
             List<Product> products = productRepository.findByNameContaining(filter);
@@ -109,6 +118,4 @@ public class  ProductService {
             throw new Exception(e.getMessage());
         }
     }
-    }
-
-
+}
