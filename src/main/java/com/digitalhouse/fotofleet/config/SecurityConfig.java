@@ -81,6 +81,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/products").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.DELETE, "/products").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.POST, "/products/images").hasAnyAuthority("Admin", "Moderator")
+                .requestMatchers(HttpMethod.GET, "/categories").permitAll()
+                .requestMatchers(HttpMethod.GET, "/categories/{id}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/categories").hasAnyAuthority("Admin", "Moderator")
+                .requestMatchers(HttpMethod.DELETE, "/categories").hasAnyAuthority("Admin", "Moderator")
+                .requestMatchers(HttpMethod.POST, "/categories/image").hasAnyAuthority("Admin", "Moderator")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();

@@ -3,15 +3,12 @@ package com.digitalhouse.fotofleet.controllers;
 import com.digitalhouse.fotofleet.dtos.CategoryDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
-import com.digitalhouse.fotofleet.models.Category;
 import com.digitalhouse.fotofleet.services.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
-import java.util.Optional;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/categories")
@@ -22,29 +19,32 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody CategoryDto categoryDto){
-        return ResponseEntity.ok(categoryService.createCategory(categoryDto));
+        return new ResponseEntity<>(categoryService.createCategory(categoryDto), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<?> uploadImage(@RequestParam Integer categoryId, @RequestParam MultipartFile file) throws BadRequestException, ResourceNotFoundException {
+        return new ResponseEntity<>(categoryService.uploadImage(categoryId, file), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable Integer id) throws ResourceNotFoundException {
-        Optional<Category> categoryDto = categoryService.getCategoryById(id);
-        return ResponseEntity.ok(categoryDto);
+        return new ResponseEntity<>(categoryService.getCategoryById(id), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Collection<CategoryDto>> listCategories(){
-        Collection<CategoryDto> categories = categoryService.listCategories();
-        return ResponseEntity.ok(categories);
+    public ResponseEntity<?> listCategories() {
+        return new ResponseEntity<>(categoryService.listCategories(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable Integer id) throws ResourceNotFoundException{
         categoryService.deleteCategory(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Categoría eliminada exitosamente.");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Integer id, @RequestBody CategoryDto categoryDto) throws BadRequestException{
+    public ResponseEntity<?> updateCategory(@PathVariable Integer id, @RequestBody CategoryDto categoryDto) throws ResourceNotFoundException {
         return new ResponseEntity<>(categoryService.updateCategory(id, categoryDto),HttpStatus.OK);
     }
 }

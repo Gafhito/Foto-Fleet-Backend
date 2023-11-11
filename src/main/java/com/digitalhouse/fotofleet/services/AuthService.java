@@ -7,6 +7,7 @@ import com.digitalhouse.fotofleet.models.Rol;
 import com.digitalhouse.fotofleet.models.User;
 import com.digitalhouse.fotofleet.security.JwtGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ public class AuthService {
     private final JwtGenerator jwtGenerator;
     private final UserService userService;
     private final RolService rolService;
+    private final EmailSenderService emailSenderService;
 
     public User register(String roleName, RegisterDto registerDto) {
         User user = new User(
@@ -34,8 +36,13 @@ public class AuthService {
                 registerDto.address(),
                 registerDto.phone());
 
+
         Rol rol = rolService.getRolByName(roleName).get();  // Validación para siguiente sprint
         user.setRoles(Collections.singletonList(rol));
+
+        // Después de registrar al usuario, llama al método para enviar el correo personalizado
+        emailSenderService.enviarCorreo(registerDto.email(), registerDto.firstName(), registerDto.lastName());
+
 
         return userService.createUser(user);
     }

@@ -24,6 +24,9 @@ public class Category {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     public Category(String name, String description) {
         this.name = name;
         this.description = description;
