@@ -1,22 +1,22 @@
 package com.digitalhouse.fotofleet.services;
 
 import com.digitalhouse.fotofleet.dtos.CharacteristicsDto;
+import com.digitalhouse.fotofleet.dtos.ProductDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Characteristics;
+import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.repositories.CharacteristicsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class CharacteristicsService {
-
     private final CharacteristicsRepository characteristicsRepository;
+    private final ProductService productService;
 
     public Characteristics createCharacteristics(CharacteristicsDto characteristicsDto){
         Characteristics c = new Characteristics(characteristicsDto.name(),characteristicsDto.description(),characteristicsDto.urlIcono());
@@ -29,21 +29,15 @@ public class CharacteristicsService {
         characteristicsRepository.deleteById(id);
     }
 
-    public List<CharacteristicsDto> listAllCharacteristics(){
-        List<Characteristics> characteristics = characteristicsRepository.findAll();
-        List<CharacteristicsDto> characteristicsDtos = new ArrayList<>();
-
-        for (Characteristics c : characteristics) {
-            characteristicsDtos.add(new CharacteristicsDto(c.getName(),c.getDescription(),c.getUrlIcono()));
-        }
-        return characteristicsDtos;
+    public List<Characteristics> listAllCharacteristics(){
+        return characteristicsRepository.findAll();
     }
 
-    public CharacteristicsDto getCharacteristicById(Integer id) throws ResourceNotFoundException {
+    public Characteristics getCharacteristicById(Integer id) throws ResourceNotFoundException {
         Optional<Characteristics> characteristics = characteristicsRepository.findById(id);
         if (characteristics.isEmpty()) throw new ResourceNotFoundException("No existe característica con el ID: " + id);
 
-        return new CharacteristicsDto(characteristics.get().getName(),characteristics.get().getDescription(),characteristics.get().getUrlIcono());
+        return characteristics.get();
     }
 
     public Characteristics updateCharacteristics(Integer id, CharacteristicsDto characteristicsDto) throws BadRequestException{
@@ -58,4 +52,24 @@ public class CharacteristicsService {
         return characteristicsRepository.save(c);
     }
 
+    public Product addCharacteristicsToProduct(Integer productId, List<Characteristics> characteristics) throws ResourceNotFoundException, BadRequestException {
+        Optional<Product> product = productService.getById(productId);
+        if (product.isEmpty()) throw new ResourceNotFoundException("No existe el producto con el ID especificado");
+        List<Characteristics> productCharacteristics = product.get().getCharacteristics();
+
+        for (Characteristics c : characteristics) {
+            Characteristics characteristic = getCharacteristicById(c.getCharacteristicsId());
+            productCharacteristics.add(characteristic);
+        }
+
+        // Se quitan características duplicadas
+        Set<Characteristics> characteristicsSet = new HashSet<>(productCharacteristics);
+        productCharacteristics.clear();
+        productCharacteristics.addAll(characteristicsSet);
+
+        Product p = product.get();
+        p.setCharacteristics(productCharacteristics);
+
+        return productService.updateProductWhithCharacteristics(p);
+    }
 }

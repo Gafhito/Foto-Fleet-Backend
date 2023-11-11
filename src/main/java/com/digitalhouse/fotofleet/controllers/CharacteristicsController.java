@@ -10,11 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/characteristics")
 @RequiredArgsConstructor
 public class CharacteristicsController {
-
     private final CharacteristicsService characteristicsService;
 
     @GetMapping
@@ -29,19 +30,22 @@ public class CharacteristicsController {
 
     @PostMapping
     public ResponseEntity<?> createCharacteristics(@RequestBody CharacteristicsDto characteristicsDto){
-        Characteristics characteristics = characteristicsService.createCharacteristics(characteristicsDto);
-        return new ResponseEntity<>(characteristics, HttpStatus.CREATED);
+        return new ResponseEntity<>(characteristicsService.createCharacteristics(characteristicsDto), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<?> addCharacteristics(@PathVariable Integer productId, @RequestBody List<Characteristics> characteristics) throws BadRequestException, ResourceNotFoundException {
+        return new ResponseEntity<>(characteristicsService.addCharacteristicsToProduct(productId, characteristics), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCharacteristcs(@PathVariable Integer id) throws ResourceNotFoundException {
         characteristicsService.deleteCharacteristcs(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Característica eliminada exitosamente.");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCharacteristics(@PathVariable Integer id, @RequestBody CharacteristicsDto characteristicsDto) throws BadRequestException{
         return new ResponseEntity<>(characteristicsService.updateCharacteristics(id, characteristicsDto), HttpStatus.OK);
     }
-
 }

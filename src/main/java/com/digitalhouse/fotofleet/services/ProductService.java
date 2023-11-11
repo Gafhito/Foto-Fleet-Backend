@@ -5,6 +5,7 @@ import com.digitalhouse.fotofleet.dtos.ProductDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Category;
+import com.digitalhouse.fotofleet.models.Characteristics;
 import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.models.Status;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
@@ -88,6 +89,13 @@ public class  ProductService {
         product.setRentalPrice(productDto.rentalPrice());
         product.setStock(productDto.stock());
         //product.setStatus();
+        return productRepository.save(product);
+    }
+
+    public Product updateProductWhithCharacteristics(Product product) throws ResourceNotFoundException, BadRequestException {
+        getDtoByProductId(product.getProductId());
+        if (product.getCharacteristics().isEmpty()) throw new BadRequestException("Error, el listado de características no puede estar vacío");
+
         return productRepository.save(product);
     }
 }
