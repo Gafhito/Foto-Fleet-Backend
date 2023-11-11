@@ -9,6 +9,8 @@ import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.models.Status;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,9 +28,9 @@ public class  ProductService {
     private final StatusService statusService;
     private final ProductImageService productImageService;
 
-    public List<ProductDto> listAllProducts(Integer page) {
+    public Page<ProductDto> listAllProducts(Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
-        List<Product> products = productRepository.listAllProducts(pageable).getContent();
+        List<Product> products = productRepository.findAll();
         List<ProductDto> productDtos = new ArrayList<>();
 
         for (Product p : products) {
@@ -36,7 +38,10 @@ public class  ProductService {
             productDtos.add(new ProductDto(p.getProductId(), p.getName(), p.getDescription(), p.getCategory().getCategoryId(), p.getRentalPrice(), p.getStock(), p.getStatus().getName(), images));
         }
 
-        return productDtos;
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), productDtos.size());
+
+        return new PageImpl<>(productDtos.subList(start, end), pageable, productDtos.size());
     }
 
     @Transactional(rollbackFor = Exception.class)
