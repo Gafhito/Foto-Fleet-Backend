@@ -7,7 +7,6 @@ import com.digitalhouse.fotofleet.dtos.CategoryDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Category;
-import com.digitalhouse.fotofleet.models.ProductImage;
 import com.digitalhouse.fotofleet.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.imaging.ImageFormat;

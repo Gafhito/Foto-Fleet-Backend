@@ -24,7 +24,7 @@ public class CharacteristicsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCharacteristicById(Integer id) throws ResourceNotFoundException{
+    public ResponseEntity<?> getCharacteristicById(@PathVariable Integer id) throws ResourceNotFoundException{
         return new ResponseEntity<>(characteristicsService.getCharacteristicById(id), HttpStatus.OK);
     }
 
@@ -33,7 +33,7 @@ public class CharacteristicsController {
         return new ResponseEntity<>(characteristicsService.createCharacteristics(characteristicsDto), HttpStatus.CREATED);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/{productId}")
     public ResponseEntity<?> addCharacteristics(@PathVariable Integer productId, @RequestBody List<Characteristics> characteristics) throws BadRequestException, ResourceNotFoundException {
         return new ResponseEntity<>(characteristicsService.addCharacteristicsToProduct(productId, characteristics), HttpStatus.OK);
     }
