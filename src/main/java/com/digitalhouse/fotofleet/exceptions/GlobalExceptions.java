@@ -22,5 +22,4 @@ public class GlobalExceptions {
         logger.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((ex.getMessage()));
     }
-
 }
