@@ -1,12 +1,14 @@
 package com.digitalhouse.fotofleet.controllers;
 
 import com.digitalhouse.fotofleet.dtos.CategoryDto;
+import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.services.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/categories")
@@ -18,6 +20,11 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody CategoryDto categoryDto){
         return new ResponseEntity<>(categoryService.createCategory(categoryDto), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<?> uploadImage(@RequestParam Integer categoryId, @RequestParam MultipartFile file) throws BadRequestException, ResourceNotFoundException {
+        return new ResponseEntity<>(categoryService.uploadImage(categoryId, file), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
