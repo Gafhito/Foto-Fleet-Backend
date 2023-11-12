@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,16 +30,17 @@ public class AuthController {
     private final UserService userService;
 
     @Operation(summary = "Registrar Moderador", description = "Permite el registro de usuarios con un nivel de Moderador", responses = {
-            @ApiResponse(responseCode = "209", description = "Usuario creado con éxito", content = @Content(schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "201", description = "Usuario creado con éxito", content = @Content(schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "400", description = "Error al registrar usuario", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/register/moderator")
     public ResponseEntity<?> registerModerator(@RequestBody RegisterDto registerDto) throws BadRequestException {
         return new ResponseEntity<>(authService.register("Moderator", registerDto), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Registrar Usuario", description = "Permite el registro de usuarios con un nivel de privilegios mínimo", responses = {
-            @ApiResponse(responseCode = "209", description = "Usuario creado con éxito", content = @Content(schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "201", description = "Usuario creado con éxito", content = @Content(schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "400", description = "Error al registrar usuario", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
     @PostMapping("/register/user")
@@ -61,6 +63,7 @@ public class AuthController {
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe el rol que ha intentado asignar", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/update")
     public ResponseEntity<?> updateRol(@RequestBody UpdateRolDto updateRolDto) throws ResourceNotFoundException, BadRequestException {
         return new ResponseEntity<>(userService.updateRol(updateRolDto), HttpStatus.OK);

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,20 +26,22 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @Operation(summary = "Creación de categoría", description = "Permite la creación de una nueva categoría", responses = {
-            @ApiResponse(responseCode = "209", description = "Categoría creada", content = @Content(schema = @Schema(implementation = Category.class))),
+            @ApiResponse(responseCode = "201", description = "Categoría creada", content = @Content(schema = @Schema(implementation = Category.class))),
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody CategoryDto categoryDto) {
         return new ResponseEntity<>(categoryService.createCategory(categoryDto), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Asignación de imagen a una categoría", description = "Permite cargar una imagen a una categoría que no la tenga", responses = {
-            @ApiResponse(responseCode = "209", description = "Imagen almacenada exitosamente", content = @Content(schema = @Schema(implementation = Category.class))),
+            @ApiResponse(responseCode = "201", description = "Imagen almacenada exitosamente", content = @Content(schema = @Schema(implementation = Category.class))),
             @ApiResponse(responseCode = "400", description = "Error al procesar la imagen", content = @Content(schema = @Schema(implementation = ResponseException.class))),
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe la categoría del ID proporcionado", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/image")
     public ResponseEntity<?> uploadImage(@RequestParam Integer categoryId, @RequestParam MultipartFile file) throws BadRequestException, ResourceNotFoundException {
         return new ResponseEntity<>(categoryService.uploadImage(categoryId, file), HttpStatus.CREATED);
@@ -66,6 +69,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe la categoría del ID proporcionado", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable Integer id) throws ResourceNotFoundException{
         categoryService.deleteCategory(id);
@@ -77,6 +81,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe la categoría del ID proporcionado", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable Integer id, @RequestBody CategoryDto categoryDto) throws ResourceNotFoundException {
         return new ResponseEntity<>(categoryService.updateCategory(id, categoryDto),HttpStatus.OK);

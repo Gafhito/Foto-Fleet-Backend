@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -48,11 +49,12 @@ public class ProductController {
     }
 
     @Operation(summary = "Carga de imágenes a un producto", description = "Permite cargar un listado de imágenes a un determinado producto cuyo ID es proporcionado como un parámetro en la URL", responses = {
-            @ApiResponse(responseCode = "209", description = "Imágenes cargadas exitosamente"),
+            @ApiResponse(responseCode = "201", description = "Imágenes cargadas exitosamente"),
             @ApiResponse(responseCode = "400", description = "Excede el límite máximo de 6 imágenes secundarias", content = @Content(schema = @Schema(implementation = ResponseException.class))),
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe un producto del ID proporcionado", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/images")
     public ResponseEntity<?> uploadImages(@RequestParam Integer productId, @RequestParam MultipartFile primaryImage, @RequestParam List<MultipartFile> secondaryImages) throws BadRequestException, ResourceNotFoundException {
         Optional<Product> product = productService.getById(productId);
@@ -64,11 +66,12 @@ public class ProductController {
     }
 
     @Operation(summary = "Creación de producto", description = "Permite la creación de un nuevo producto", responses = {
-            @ApiResponse(responseCode = "209", description = "Producto creado exitosamente", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "201", description = "Producto creado exitosamente", content = @Content(schema = @Schema(implementation = Product.class))),
             @ApiResponse(responseCode = "400", description = "Ya existe un producto registrado con este nombre", content = @Content(schema = @Schema(implementation = ResponseException.class))),
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe una categoría con el ID proporcionado en el DTO", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
         Product product = productService.createProduct(productDto);
@@ -80,6 +83,7 @@ public class ProductController {
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe el producto del ID proporcionado", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Integer id) throws ResourceNotFoundException {
         productService.deleteProduct(id);
@@ -92,6 +96,7 @@ public class ProductController {
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe un status con el nombre proporcionado en el DTO", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody ProductDto productDto) throws BadRequestException, ResourceNotFoundException {
         return new ResponseEntity<>(productService.updateProduct(id, productDto),HttpStatus.OK);

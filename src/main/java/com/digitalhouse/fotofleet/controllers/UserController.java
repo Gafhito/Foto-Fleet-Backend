@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +33,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Perfil obtenido exitosamente", content = @Content(schema = @Schema(implementation = UserDto.class))),
             @ApiResponse(responseCode = "400", description = "No existe un usuario con este email", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<?> profile(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt) throws BadRequestException {
         return new ResponseEntity<>(userService.getProfile(jwt), HttpStatus.OK);
@@ -41,6 +43,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Email reenviado exitosamente"),
             @ApiResponse(responseCode = "404", description = "No existe un usuario con este email", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/resend")
     public ResponseEntity<?> resendEmail(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt) throws ResourceNotFoundException {
         emailSenderService.resendEmail(jwt);

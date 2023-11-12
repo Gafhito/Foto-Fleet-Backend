@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -45,9 +46,10 @@ public class CharacteristicsController {
     }
 
     @Operation(summary = "Creación de característica", description = "Permite la creación de una nueva característica", responses = {
-            @ApiResponse(responseCode = "209", description = "Característica creada", content = @Content(schema = @Schema(implementation = Characteristics.class))),
+            @ApiResponse(responseCode = "201", description = "Característica creada", content = @Content(schema = @Schema(implementation = Characteristics.class))),
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<?> createCharacteristics(@RequestBody CharacteristicsDto characteristicsDto){
         return new ResponseEntity<>(characteristicsService.createCharacteristics(characteristicsDto), HttpStatus.CREATED);
@@ -59,6 +61,7 @@ public class CharacteristicsController {
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe un producto del ID proporcionado", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/{productId}")
     public ResponseEntity<?> addCharacteristics(@PathVariable Integer productId, @RequestBody List<Characteristics> characteristics) throws BadRequestException, ResourceNotFoundException {
         return new ResponseEntity<>(characteristicsService.addCharacteristicsToProduct(productId, characteristics), HttpStatus.OK);
@@ -69,6 +72,7 @@ public class CharacteristicsController {
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe la característica del ID proporcionado", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCharacteristcs(@PathVariable Integer id) throws ResourceNotFoundException {
         characteristicsService.deleteCharacteristcs(id);
@@ -80,6 +84,7 @@ public class CharacteristicsController {
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe la categoría del ID proporcionado", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCharacteristics(@PathVariable Integer id, @RequestBody CharacteristicsDto characteristicsDto) throws ResourceNotFoundException {
         return new ResponseEntity<>(characteristicsService.updateCharacteristics(id, characteristicsDto), HttpStatus.OK);
