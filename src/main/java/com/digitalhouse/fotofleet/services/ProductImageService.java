@@ -114,4 +114,23 @@ public class ProductImageService {
 
         return convertedFile;
     }
+
+    public List<ProductImage> getImagesByProduct(Product product) {
+        return productImageRepository.listByProductId(product.getProductId());
+    }
+
+    public void deleteImagesToS3ByProduct(Product product) {
+        List<ProductImage> productImages = getImagesByProduct(product);
+
+        if (!productImages.isEmpty()) {
+            for (ProductImage pi : productImages) {
+                s3Client.deleteObject(bucket, pi.getFileName());
+                deleteProductImagesById(pi.getImageId());
+            }
+        }
+    }
+
+    public void deleteProductImagesById(Integer id) {
+        productImageRepository.deleteById(id);
+    }
 }

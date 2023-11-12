@@ -74,9 +74,10 @@ public class  ProductService {
     }
 
     public void deleteProduct(Integer id) throws ResourceNotFoundException{
-        if(getDtoByProductId(id) == null){
-            throw new ResourceNotFoundException("No existe el producto con ID: " + id);
-        }
+        Optional<Product> product = getById(id);
+        if(product.isEmpty()) throw new ResourceNotFoundException("No existe el producto con ID: " + id);
+
+        productImageService.deleteImagesToS3ByProduct(product.get());
         productRepository.deleteById(id);
     }
   
