@@ -24,49 +24,19 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
 
-    private ResponseEntity<?> error() {
-        Map<String, String> message = new HashMap<>();
-        message.put("error", "Este correo no puede ser utilizado, por favor intenta con otro");
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-    }
-
     @PostMapping("/register/admin")
-    public ResponseEntity<?> registerAdmin(@RequestBody RegisterDto registerDto) {
-        ResponseEntity<?> response;
-        if (userService.existUserByEmail(registerDto.email())) {
-            response = error();
-        } else {
-            User user = authService.register("Admin", registerDto);
-            response = new ResponseEntity<>(user, HttpStatus.CREATED);
-        }
-
-        return response;
+    public ResponseEntity<?> registerAdmin(@RequestBody RegisterDto registerDto) throws BadRequestException {
+        return new ResponseEntity<>(authService.register("Admin", registerDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/register/moderator")
-    public ResponseEntity<?> registerModerator(@RequestBody RegisterDto registerDto) {
-        ResponseEntity<?> response;
-        if (userService.existUserByEmail(registerDto.email())) {
-            response = error();
-        } else {
-            User user = authService.register("Moderator", registerDto);
-            response = new ResponseEntity<>(user, HttpStatus.CREATED);
-        }
-
-        return response;
+    public ResponseEntity<?> registerModerator(@RequestBody RegisterDto registerDto) throws BadRequestException {
+        return new ResponseEntity<>(authService.register("Moderator", registerDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/register/user")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterDto registerDto) {
-        ResponseEntity<?> response;
-        if (userService.existUserByEmail(registerDto.email())) {
-            response = error();
-        } else {
-            User user = authService.register("User", registerDto);
-            response = new ResponseEntity<>(user, HttpStatus.CREATED);
-        }
-
-        return response;
+    public ResponseEntity<?> registerUser(@RequestBody RegisterDto registerDto) throws BadRequestException {
+        return new ResponseEntity<>(authService.register("User", registerDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
