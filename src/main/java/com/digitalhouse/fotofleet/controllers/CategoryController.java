@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@Tag(name = "Category", description = "Permite la creación, el listado, la actualización y borrado de categorías de productos")
+@Tag(name = "Categorías", description = "Permite la creación, el listado, la actualización y borrado de categorías de productos")
 public class CategoryController {
     private final CategoryService categoryService;
 
