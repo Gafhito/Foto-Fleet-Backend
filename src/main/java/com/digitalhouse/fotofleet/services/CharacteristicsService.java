@@ -40,9 +40,9 @@ public class CharacteristicsService {
         return characteristics.get();
     }
 
-    public Characteristics updateCharacteristics(Integer id, CharacteristicsDto characteristicsDto) throws BadRequestException{
+    public Characteristics updateCharacteristics(Integer id, CharacteristicsDto characteristicsDto) throws ResourceNotFoundException {
         Optional<Characteristics> characteristics = characteristicsRepository.findById(id);
-        if (characteristics.isEmpty()) throw new BadRequestException("No es posible modificar la característica con ID: " + id + ", porque no está registrada");
+        if (characteristics.isEmpty()) throw new ResourceNotFoundException("No es posible modificar la característica con ID: " + id + ", porque no está registrada");
 
         Characteristics c = characteristics.get();
         c.setName(characteristicsDto.name());

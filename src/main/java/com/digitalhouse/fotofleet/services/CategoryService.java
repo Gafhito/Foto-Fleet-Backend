@@ -42,8 +42,8 @@ public class CategoryService {
         return category.get();
     }
 
-    public Category createCategory(CategoryDto categoryDto){
-        return categoryRepository.save(new Category(categoryDto.name(),categoryDto.description()));
+    public Category createCategory(CategoryDto categoryDto) {
+        return categoryRepository.save(new Category(categoryDto.name(), categoryDto.description()));
     }
 
     public void deleteCategory(Integer id) throws ResourceNotFoundException {
