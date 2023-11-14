@@ -11,15 +11,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptions {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptions.class);
 
-    @ExceptionHandler({ResourceNotFoundException.class})
-    public ResponseEntity<String> procesarErrorNotFound(ResourceNotFoundException ex){
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ResponseException> badRequestException(BadRequestException ex){
         logger.error(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        ResponseException responseException = new ResponseException(400, "Bad Request", ex.getMessage());
+        return new ResponseEntity<>(responseException, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({BadRequestException.class})
-    public ResponseEntity<String> procesarBadRequest(BadRequestException ex){
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ResponseException> resourceNotFoundException(ResourceNotFoundException ex){
         logger.error(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((ex.getMessage()));
+        ResponseException responseException = new ResponseException(404, "Not Found", ex.getMessage());
+        return new ResponseEntity<>(responseException, HttpStatus.NOT_FOUND);
     }
 }

@@ -110,13 +110,10 @@ public class  ProductService {
         return productRepository.save(product);
     }
 
-    public List<Product> search(String filter) throws Exception {
-        try {
-            List<Product> products = productRepository.findByNameContaining(filter);
-            return products;
+    public List<Product> search(String filter) throws ResourceNotFoundException {
+        List<Product> products = productRepository.findByNameContaining(filter);
+        if (products.isEmpty()) throw new ResourceNotFoundException("No se encontró ningún producto con el nombre proporcionado");
 
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
+        return products;
     }
 }

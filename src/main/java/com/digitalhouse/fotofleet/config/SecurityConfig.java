@@ -78,6 +78,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/user").hasAnyAuthority("Admin", "Moderator", "User")
                 .requestMatchers(HttpMethod.GET, "/products").permitAll()
                 .requestMatchers(HttpMethod.GET, "/products/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/products/search").permitAll()
                 .requestMatchers(HttpMethod.POST, "/products").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.PUT, "/products/{id}").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.DELETE, "/products").hasAnyAuthority("Admin", "Moderator")

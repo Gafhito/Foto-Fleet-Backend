@@ -3,6 +3,7 @@ package com.digitalhouse.fotofleet.services;
 import com.digitalhouse.fotofleet.dtos.LoginDto;
 import com.digitalhouse.fotofleet.dtos.RegisterDto;
 import com.digitalhouse.fotofleet.dtos.ResponseLoginDto;
+import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.models.Rol;
 import com.digitalhouse.fotofleet.models.User;
 import com.digitalhouse.fotofleet.security.JwtGenerator;
@@ -27,7 +28,9 @@ public class AuthService {
     private final RolService rolService;
     private final EmailSenderService emailSenderService;
 
-    public User register(String roleName, RegisterDto registerDto) {
+    public User register(String roleName, RegisterDto registerDto) throws BadRequestException {
+        if (userService.existUserByEmail(registerDto.email())) throw new BadRequestException("Este correo no puede ser utilizado, por favor intenta con otro");
+
         User user = new User(
                 registerDto.firstName(),
                 registerDto.lastName(),
