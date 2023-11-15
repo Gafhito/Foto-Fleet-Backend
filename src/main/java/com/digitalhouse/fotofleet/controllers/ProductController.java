@@ -102,7 +102,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.updateProduct(id, productDto),HttpStatus.OK);
     }
 
-    @Operation(summary = "Buscar producto", description = "Busca un producto a través del nombre proporcionado como parámetro en la URL de la petición", responses = {
+    @Operation(summary = "Buscar producto", description = "Busca un producto a través del nombre y/o nombre de la categoría proporcionados como parámetro en la URL de la petición, se debe acompañar del parámetro 'page' para indicar el número de paginación", responses = {
             @ApiResponse(responseCode = "200", description = "Búsqueda exitosa", content = @Content(schema = @Schema(implementation = Product.class)))
     })
     @GetMapping("/search")
