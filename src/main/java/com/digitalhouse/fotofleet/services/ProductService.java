@@ -110,10 +110,20 @@ public class  ProductService {
         return productRepository.save(product);
     }
 
-    public List<Product> search(String filter) throws ResourceNotFoundException {
-        List<Product> products = productRepository.findByNameContaining(filter);
-        if (products.isEmpty()) throw new ResourceNotFoundException("No se encontró ningún producto con el nombre proporcionado");
+    public Page<ProductDto> search(Integer page, String product, String categoryName) throws ResourceNotFoundException {
+        Pageable pageable = PageRequest.of(page, 10);
+        List<Product> products = productRepository.findByFilter(product, categoryName);
+        List<ProductDto> productDtos = new ArrayList<>();
 
-        return products;
+        for (Product p : products) {
+            ProductDto productDto = getDtoByProductId(p.getProductId());
+            productDtos.add(productDto);
+        }
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), productDtos.size());
+
+
+        return new PageImpl<>(productDtos.subList(start, end), pageable, productDtos.size());
     }
 }
