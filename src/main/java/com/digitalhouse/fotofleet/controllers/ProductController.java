@@ -103,12 +103,10 @@ public class ProductController {
     }
 
     @Operation(summary = "Buscar producto", description = "Busca un producto a través del nombre proporcionado como parámetro en la URL de la petición", responses = {
-            @ApiResponse(responseCode = "200", description = "Producto actualizado exitosamente", content = @Content(schema = @Schema(implementation = Product.class))),
-            @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
-            @ApiResponse(responseCode = "404", description = "No existe un producto registrado con el nombre proporcionado", content = @Content(schema = @Schema(implementation = ResponseException.class)))
+            @ApiResponse(responseCode = "200", description = "Búsqueda exitosa", content = @Content(schema = @Schema(implementation = Product.class)))
     })
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam String filter) throws ResourceNotFoundException {
-        return new ResponseEntity<>(productService.search(filter), HttpStatus.OK);
+    public ResponseEntity<?> search(@RequestParam Integer page,  @RequestParam String product, @RequestParam String categoryName) throws ResourceNotFoundException {
+        return new ResponseEntity<>(productService.search(page, product, categoryName), HttpStatus.OK);
     }
 }
