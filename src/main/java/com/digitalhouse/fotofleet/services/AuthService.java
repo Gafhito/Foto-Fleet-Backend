@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,12 +41,11 @@ public class AuthService {
                 registerDto.phone());
 
 
-        Rol rol = rolService.getRolByName(roleName).get();  // Validación para siguiente sprint
-        user.setRoles(Collections.singletonList(rol));
-
+        Optional<Rol> rol = rolService.getRolByName(roleName);
+        if (rol.isEmpty()) throw new BadRequestException("No existe un rol con este nombre");
+        user.setRoles(Collections.singletonList(rol.get()));
         // Después de registrar al usuario, llama al método para enviar el correo personalizado
         emailSenderService.enviarCorreo(registerDto.email(), registerDto.firstName(), registerDto.lastName());
-
 
         return userService.createUser(user);
     }

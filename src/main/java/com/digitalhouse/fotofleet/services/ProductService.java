@@ -5,7 +5,6 @@ import com.digitalhouse.fotofleet.dtos.ProductDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Category;
-import com.digitalhouse.fotofleet.models.Characteristics;
 import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.models.Status;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
@@ -125,5 +124,19 @@ public class  ProductService {
 
 
         return new PageImpl<>(productDtos.subList(start, end), pageable, productDtos.size());
+    }
+
+    public void changeCategory(Integer categoryId) throws ResourceNotFoundException {
+        categoryService.getCategoryById(categoryId);
+        List<Product> products = productRepository.listByCategoryId(categoryId);
+
+        if (!products.isEmpty()) {
+            Category others = categoryService.getOthers();
+
+            for (Product p : products) {
+                p.setCategory(others);
+                productRepository.save(p);
+            }
+        }
     }
 }

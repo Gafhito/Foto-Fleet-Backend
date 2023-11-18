@@ -15,12 +15,14 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("select p from Product p")
     Page<Product> listAllProducts(Pageable page);
 
+    @Query("select p from Product p where p.category.categoryId = ?1")
+    List<Product> listByCategoryId(Integer categoryId);
+
     @Query("select p from Product p where p.name = ?1")
     Optional<Product> findByName(String name);
 
     @Query("select p from Product p " +
             "where p.name like %?1% " +
-            "or p.description like %?1% " +
             "or p.category.name like %?2%")
     List<Product> findByFilter(String product, String categoryName);
 }
