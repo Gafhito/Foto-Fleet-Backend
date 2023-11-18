@@ -6,6 +6,7 @@ import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.exceptions.ResponseException;
 import com.digitalhouse.fotofleet.models.Category;
 import com.digitalhouse.fotofleet.services.CategoryService;
+import com.digitalhouse.fotofleet.services.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "Categorías", description = "Permite la creación, el listado, la actualización y borrado de categorías de productos")
 public class CategoryController {
     private final CategoryService categoryService;
+    private final ProductService productService;
 
     @Operation(summary = "Creación de categoría", description = "Permite la creación de una nueva categoría", responses = {
             @ApiResponse(responseCode = "201", description = "Categoría creada", content = @Content(schema = @Schema(implementation = Category.class))),
@@ -66,12 +68,14 @@ public class CategoryController {
 
     @Operation(summary = "Elimina una categoría", description = "Elimina categoría a través del ID proporcionado en la URL de la petición", responses = {
             @ApiResponse(responseCode = "204", description = "Categoría eliminada exitosamente"),
+            @ApiResponse(responseCode = "400", description = "No se puede eliminar la imágen de la categoría", content = @Content(schema = @Schema(implementation = ResponseException.class))),
             @ApiResponse(responseCode = "403", description = "No tiene permisos para realizar dicha acción"),
             @ApiResponse(responseCode = "404", description = "No existe la categoría del ID proporcionado", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable Integer id) throws ResourceNotFoundException{
+    public ResponseEntity<?> deleteCategory(@PathVariable Integer id) throws ResourceNotFoundException, BadRequestException {
+        productService.changeCategory(id);
         categoryService.deleteCategory(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
