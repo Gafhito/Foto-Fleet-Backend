@@ -54,9 +54,21 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "No existe un producto con este ID", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping
+    @PostMapping("/favorite")
     public ResponseEntity<?> addFavorite(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt, @RequestParam Integer productId) throws BadRequestException, ResourceNotFoundException {
         userService.addFavorite(jwt, productId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Eliminar un producto favorito de un usuario determinado", description = "Elimina un producto al listado de favoritos del usuario en base a la petición enviada con el JWT en la cabecera de Authorization y el parámetro productId con el identificador de dicho producto", responses = {
+            @ApiResponse(responseCode = "200", description = "Producto favorito eliminado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "No existe un usuario con este email", content = @Content(schema = @Schema(implementation = ResponseException.class))),
+            @ApiResponse(responseCode = "404", description = "No existe un producto con este ID", content = @Content(schema = @Schema(implementation = ResponseException.class)))
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping("/favorite")
+    public ResponseEntity<?> deleteFavorite(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt, @RequestParam Integer productId) throws BadRequestException, ResourceNotFoundException {
+        userService.deleteFavorite(jwt, productId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

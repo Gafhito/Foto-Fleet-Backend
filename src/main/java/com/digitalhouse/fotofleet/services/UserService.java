@@ -31,6 +31,13 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    private User getUserByJwt(String jwt) throws BadRequestException {
+        Optional<User> user = getUserByEmail(jwtGenerator.getEmailOfJwt(jwt.substring(7)));
+        if (user.isEmpty()) throw new BadRequestException("No existe el usuario en el sistema");
+
+        return user.get();
+    }
+
     public User createUser(User user) {
         return userRepository.save(user);
     }
@@ -75,20 +82,35 @@ public class UserService {
     }
 
     public void addFavorite(String jwt, Integer productId) throws BadRequestException, ResourceNotFoundException {
-        Optional<User> user = getUserByEmail(jwtGenerator.getEmailOfJwt(jwt.substring(7)));
+        User user = getUserByJwt(jwt);
         Optional<Product> product = productService.getById(productId);
-
-        if (user.isEmpty()) throw new BadRequestException("Error interno del sistema, póngase en contacto con soporte");
         if (product.isEmpty()) throw new ResourceNotFoundException("No existe el producto con el ID especificado");
 
-        User u = user.get();
-        List<Product> favorites = u.getProductFavorites();
+        List<Product> favorites = user.getProductFavorites();
         favorites.add(product.get());
         Set<Product> singleFavorites = new HashSet<>(favorites);  // Crea un listado de productos favoritos sin repetirlos
         favorites.clear();  // Limpia listado
         favorites.addAll(singleFavorites);  // Agrega nueva lista de favoritos sin repetir ninguno
 
-        u.setProductFavorites(favorites);
-        userRepository.save(u);  // Guarda el usuario con los cambios en listado de favoritos
+        user.setProductFavorites(favorites);
+        userRepository.save(user);  // Guarda el usuario con los cambios en listado de favoritos
+    }
+
+    public void deleteFavorite(String jwt, Integer productId) throws BadRequestException, ResourceNotFoundException {
+        User user = getUserByJwt(jwt);
+        Optional<Product> product = productService.getById(productId);
+        if (product.isEmpty()) throw new ResourceNotFoundException("No existe el producto con el ID especificado");
+
+        List<Product> favorites = user.getProductFavorites();
+        List<Product> newFavorites = new ArrayList<>();
+
+        for (Product p : favorites) {
+            if (p.getProductId() != product.get().getProductId()) {
+                newFavorites.add(p);
+            }
+        }
+
+        user.setProductFavorites(newFavorites);
+        userRepository.save(user);
     }
 }
