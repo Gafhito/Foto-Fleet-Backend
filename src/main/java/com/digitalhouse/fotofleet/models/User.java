@@ -52,6 +52,14 @@ public class User {
     )
     private List<Rol> roles;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_favorites",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+    )
+    private List<Product> productFavorites;
+
     public User(String firstName, String lastName, String email, String password, String address, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
