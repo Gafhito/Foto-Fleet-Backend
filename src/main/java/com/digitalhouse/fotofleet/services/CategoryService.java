@@ -22,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -46,9 +48,22 @@ public class CategoryService {
         return categoryRepository.save(new Category(categoryDto.name(), categoryDto.description()));
     }
 
-    public void deleteCategory(Integer id) throws ResourceNotFoundException {
+    public void deleteCategory(Integer id) throws ResourceNotFoundException, BadRequestException {
         Category category = getCategoryById(id);
+        deleteCategoryImage(category);
+
         categoryRepository.deleteById(category.getCategoryId());
+    }
+
+    private void deleteCategoryImage(Category category) throws BadRequestException {
+        try {
+            URI uri = new URI(category.getImageUrl());
+            String fileName = uri.getPath().substring(1);
+
+            s3Client.deleteObject(bucket, fileName);
+        } catch (URISyntaxException e) {
+            throw new BadRequestException("No se puede eliminar la imágen de la categoría");
+        }
     }
 
     public List<Category> listCategories(){
@@ -110,5 +125,12 @@ public class CategoryService {
         }
 
         return convertedFile;
+    }
+
+    public Category getOthers() throws ResourceNotFoundException {
+        Optional<Category> others = categoryRepository.findByName("Otros");
+        if (others.isEmpty()) throw new ResourceNotFoundException("No existe la categoría Otros");
+
+        return others.get();
     }
 }
