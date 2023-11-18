@@ -23,7 +23,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("select p from Product p " +
             "where p.name like %?1% " +
-            "or p.description like %?1% " +
             "or p.category.name like %?2%")
     List<Product> findByFilter(String product, String categoryName);
 }
