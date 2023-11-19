@@ -71,4 +71,14 @@ public class UserController {
         userService.deleteFavorite(jwt, productId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Operation(summary = "Listado de alquileres", description = "Muesta el listado de alquileres del usuario en base a la petición enviada con el JWT en la cabecera de Authorization", responses = {
+            @ApiResponse(responseCode = "200", description = "Listado obtenido exitosamente"),
+            @ApiResponse(responseCode = "404", description = "No existe un usuario con este email", content = @Content(schema = @Schema(implementation = ResponseException.class)))
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/rentals")
+    public ResponseEntity<?> listRentals(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt) throws BadRequestException {
+        return new ResponseEntity<>(userService.listRentals(jwt), HttpStatus.OK);
+    }
 }

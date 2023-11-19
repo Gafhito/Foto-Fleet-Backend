@@ -15,7 +15,7 @@ public class RentalScheduled {
     private final RentalService rentalService;
 
     // Tarea de actualización de status de alquileres vencidos (todos los días a las 00:00hs)
-    @Scheduled(cron = "0 0 * * *")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void rentalDelayed() throws ResourceNotFoundException {
         List<Rental> rentals = rentalService.listDelayed();
 
@@ -25,7 +25,7 @@ public class RentalScheduled {
     }
 
     // Tarea de actualización de status de alquileres pendientes olvidados (todos los días a las 01:00hs)
-    @Scheduled(cron = "0 1 * * *")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void rentalPending() throws ResourceNotFoundException {
         List<Rental> rentals = rentalService.listPending();
 

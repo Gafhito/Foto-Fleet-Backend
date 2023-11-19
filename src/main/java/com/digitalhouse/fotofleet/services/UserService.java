@@ -1,11 +1,13 @@
 package com.digitalhouse.fotofleet.services;
 
 import com.digitalhouse.fotofleet.dtos.ProductDto;
+import com.digitalhouse.fotofleet.dtos.RentalResponseDto;
 import com.digitalhouse.fotofleet.dtos.UpdateRolDto;
 import com.digitalhouse.fotofleet.dtos.UserDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Product;
+import com.digitalhouse.fotofleet.models.RentalDetail;
 import com.digitalhouse.fotofleet.models.Rol;
 import com.digitalhouse.fotofleet.models.User;
 import com.digitalhouse.fotofleet.repositories.UserRepository;
@@ -21,6 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RolService rolService;
     private final ProductService productService;
+    private final RentalDetailService rentalDetailService;
     private final JwtGenerator jwtGenerator;
 
     public Boolean existUserByEmail(String email) {
@@ -112,5 +115,10 @@ public class UserService {
 
         user.setProductFavorites(newFavorites);
         userRepository.save(user);
+    }
+
+    public List<RentalResponseDto> listRentals(String jwt) throws BadRequestException {
+        User user = getUserByJwt(jwt);
+        return rentalDetailService.listByUserId(user.getUserId());
     }
 }

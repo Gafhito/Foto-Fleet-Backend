@@ -19,4 +19,7 @@ public interface RentalDetailRepository extends JpaRepository<RentalDetail, Inte
             "and (rd.rental.startDate >= ?2 and rd.rental.endDate <= ?3) " +
             "and (rd.rental.status.name = 'Pending' or rd.rental.status.name = 'Active')")
     List<RentalDetail> findPendingOrActiveByProductIdAndDate(Integer productId, LocalDate startDate, LocalDate endDate);
+
+    @Query("select rd from RentalDetail rd where rd.rental.user.userId = ?1")
+    List<RentalDetail> findByUserId(Integer userId);
 }
