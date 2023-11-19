@@ -27,6 +27,13 @@ public class RentalService {
     private final StatusService statusService;
     private final RentalDetailService rentalDetailService;
 
+    public Rental getById(Integer id) throws ResourceNotFoundException {
+        Optional<Rental> rental = rentalRepository.findById(id);
+        if (rental.isEmpty()) throw new ResourceNotFoundException("No existe el alquiler con ID " + id);
+
+        return rental.get();
+    }
+
     public Rental createRental(Rental rental) {
         return rentalRepository.save(rental);
     }
@@ -57,5 +64,17 @@ public class RentalService {
         }
 
         return rentalResponseDtos;
+    }
+
+    public RentalResponseDto changeStatus(Integer rentalId, String status) throws ResourceNotFoundException {
+        Optional<Status> s = statusService.getStatusByName(status);
+        if (s.isEmpty()) throw new ResourceNotFoundException("No existe el status " + status);
+
+        RentalDetail rentalDetail = rentalDetailService.getByRentalId(rentalId);
+        Rental rental = getById(rentalId);
+        rental.setStatus(s.get());
+        Rental newRental = rentalRepository.save(rental);
+
+        return new RentalResponseDto(rentalDetail.getDetailId(), newRental.getRentalId(), rentalDetail.getProduct().getProductId(), rentalDetail.getQuantity(), rentalDetail.getRentalPrice(), newRental.getStartDate(), newRental.getEndDate(), newRental.getStatus().getName());
     }
 }

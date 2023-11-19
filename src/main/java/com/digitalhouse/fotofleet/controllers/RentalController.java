@@ -24,7 +24,7 @@ public class RentalController {
     }
 
     @PostMapping("/status")
-    public ResponseEntity<?> changeStatus(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt, @RequestParam Integer rentalDetailId, @RequestParam String status) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> changeStatus(@RequestParam Integer rentalId, @RequestParam String status) throws ResourceNotFoundException {
+        return new ResponseEntity<>(rentalService.changeStatus(rentalId, status), HttpStatus.OK);
     }
 }
