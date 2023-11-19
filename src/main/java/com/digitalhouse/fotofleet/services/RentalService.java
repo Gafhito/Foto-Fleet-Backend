@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,16 @@ public class RentalService {
         if (rental.isEmpty()) throw new ResourceNotFoundException("No existe el alquiler con ID " + id);
 
         return rental.get();
+    }
+
+    public List<Rental> listDelayed() {
+        LocalDate actualDate = LocalDate.now();
+        return rentalRepository.findDelayed(actualDate);
+    }
+
+    public List<Rental> listPending() {
+        LocalDate actualDate = LocalDate.now();
+        return rentalRepository.findPending(actualDate.plusDays(1));
     }
 
     public Rental createRental(Rental rental) {

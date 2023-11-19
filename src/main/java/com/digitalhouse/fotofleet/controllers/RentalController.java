@@ -23,8 +23,13 @@ public class RentalController {
         return new ResponseEntity<>(rentalService.addRentals(jwt, rentalDtos), HttpStatus.CREATED);
     }
 
-    @PostMapping("/status")
-    public ResponseEntity<?> changeStatus(@RequestParam Integer rentalId, @RequestParam String status) throws ResourceNotFoundException {
-        return new ResponseEntity<>(rentalService.changeStatus(rentalId, status), HttpStatus.OK);
+    @PostMapping("/active")
+    public ResponseEntity<?> statusActive(@RequestParam Integer rentalId) throws ResourceNotFoundException {
+        return new ResponseEntity<>(rentalService.changeStatus(rentalId, "Active"), HttpStatus.OK);
+    }
+
+    @PostMapping("/completed")
+    public ResponseEntity<?> statusCompleted(@RequestParam Integer rentalId) throws ResourceNotFoundException {
+        return new ResponseEntity<>(rentalService.changeStatus(rentalId, "Completed"), HttpStatus.OK);
     }
 }
