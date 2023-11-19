@@ -31,7 +31,7 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    private User getUserByJwt(String jwt) throws BadRequestException {
+    public User getUserByJwt(String jwt) throws BadRequestException {
         Optional<User> user = getUserByEmail(jwtGenerator.getEmailOfJwt(jwt.substring(7)));
         if (user.isEmpty()) throw new BadRequestException("No existe el usuario en el sistema");
 

@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rentals")
@@ -25,16 +25,16 @@ public class Rental {
     private User user;
 
     @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @Column(name = "end_date", nullable = false)
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
 
-    public Rental(User user, LocalDate startDate, LocalDate endDate, Status status) {
+    public Rental(User user, LocalDateTime startDate, LocalDateTime endDate, Status status) {
         this.user = user;
         this.startDate = startDate;
         this.endDate = endDate;

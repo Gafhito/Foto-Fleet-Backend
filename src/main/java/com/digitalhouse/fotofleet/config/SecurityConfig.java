@@ -97,6 +97,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/characteristics/{id}").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.DELETE, "/characteristics").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.POST, "/characteristics/{productId}").hasAnyAuthority("Admin", "Moderator")
+                .requestMatchers(HttpMethod.POST, "/rental").hasAuthority("User")
+                .requestMatchers(HttpMethod.POST, "/rental/status").hasAnyAuthority("Admin", "Moderator")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
