@@ -78,6 +78,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/user").hasAnyAuthority("Admin", "Moderator", "User")
                 .requestMatchers(HttpMethod.POST, "/user/favorite").hasAnyAuthority("Admin", "Moderator", "User")
                 .requestMatchers(HttpMethod.DELETE, "/user/favorite").hasAnyAuthority("Admin", "Moderator", "User")
+                .requestMatchers(HttpMethod.GET, "/user/rentals").hasAuthority("User")
                 .requestMatchers(HttpMethod.GET, "/products").permitAll()
                 .requestMatchers(HttpMethod.GET, "/products/{id}").permitAll()
                 .requestMatchers(HttpMethod.GET, "/products/search").permitAll()
@@ -97,6 +98,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/characteristics/{id}").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.DELETE, "/characteristics").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.POST, "/characteristics/{productId}").hasAnyAuthority("Admin", "Moderator")
+                .requestMatchers(HttpMethod.POST, "/rental").hasAuthority("User")
+                .requestMatchers(HttpMethod.POST, "/rental/active").hasAnyAuthority("Admin", "Moderator")
+                .requestMatchers(HttpMethod.POST, "/rental/completed").hasAnyAuthority("Admin", "Moderator")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
