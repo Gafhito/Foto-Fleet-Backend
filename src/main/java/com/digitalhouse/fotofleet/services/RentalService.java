@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,10 +51,13 @@ public class RentalService {
             if (rentalDto.startDate().isAfter(rentalDto.endDate())) throw new BadRequestException("La fecha de inicio del alquiler no puede exceder la fecha de fin del mismo");
             if (Duration.between(rentalDto.startDate(), rentalDto.endDate()).toDays() > 90) throw new BadRequestException("El alquiler del producto no puede exceder los 3 meses");
 
+            List<RentalDetail> rentalDetails = rentalDetailService.listPendingOrActiveByProductIdAndDate(product.get().getProductId(), rentalDto.startDate().toLocalDate(), rentalDto.endDate().toLocalDate());
+            if (rentalDetails.size() >= rentalDto.quantity()) throw new BadRequestException("Lo sentimos, en el rango de fechas indicadas no habrá disponible el stock suficiente de " + product.get().getName() + " para que pueda alquilar");
+
             Integer daysRented = (int) Duration.between(rentalDto.startDate(), rentalDto.endDate()).toDays();
             Double rentalPrice = (product.get().getRentalPrice() * rentalDto.quantity()) * daysRented;
 
-            Rental rental = createRental(new Rental(user, rentalDto.startDate(), rentalDto.endDate(), status.get()));
+            Rental rental = createRental(new Rental(user, rentalDto.startDate().toLocalDate(), rentalDto.endDate().toLocalDate(), status.get()));
             RentalDetail rentalDetail = rentalDetailService.createRentalDetail(new RentalDetail(rental, product.get(), rentalDto.quantity(), rentalPrice, daysRented));
 
             rentalResponseDtos.add(new RentalResponseDto(rentalDetail.getDetailId(), rental.getRentalId(), product.get().getProductId(), rentalDetail.getQuantity(), rentalDetail.getRentalPrice(), rental.getStartDate(), rental.getEndDate(), status.get().getName()));

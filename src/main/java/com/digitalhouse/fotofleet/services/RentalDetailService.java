@@ -6,19 +6,14 @@ import com.digitalhouse.fotofleet.repositories.RentalDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class RentalDetailService {
     private final RentalDetailRepository rentalDetailRepository;
-
-    public RentalDetail getById(Integer id) throws ResourceNotFoundException {
-        Optional<RentalDetail> rentalDetail = rentalDetailRepository.findById(id);
-        if (rentalDetail.isEmpty()) throw new ResourceNotFoundException("No existe el detalle del alquiler con ID " + id);
-
-        return rentalDetail.get();
-    }
 
     public RentalDetail getByRentalId(Integer rentalId) throws ResourceNotFoundException {
         Optional<RentalDetail> rentalDetail = rentalDetailRepository.findByRentalId(rentalId);
@@ -29,5 +24,9 @@ public class RentalDetailService {
 
     public RentalDetail createRentalDetail(RentalDetail rentalDetail) {
         return rentalDetailRepository.save(rentalDetail);
+    }
+
+    public List<RentalDetail> listPendingOrActiveByProductIdAndDate(Integer productId, LocalDate startDate, LocalDate endDate) {
+        return rentalDetailRepository.findPendingOrActiveByProductIdAndDate(productId, startDate, endDate);
     }
 }

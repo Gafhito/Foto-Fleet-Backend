@@ -1,6 +1,6 @@
 package com.digitalhouse.fotofleet.dtos;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record RentalResponseDto(
         Integer rentalDetailId,
@@ -8,8 +8,8 @@ public record RentalResponseDto(
         Integer productId,
         Integer quantity,
         Double rentalPrice,
-        LocalDateTime startDate,
-        LocalDateTime endDate,
+        LocalDate startDate,
+        LocalDate endDate,
         String status
 ) {
 }
