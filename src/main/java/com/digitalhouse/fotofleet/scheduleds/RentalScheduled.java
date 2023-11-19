@@ -24,7 +24,7 @@ public class RentalScheduled {
         }
     }
 
-    // Tarea de actualización de status de alquileres vencidos (todos los días a las 01:00hs)
+    // Tarea de actualización de status de alquileres pendientes olvidados (todos los días a las 01:00hs)
     @Scheduled(cron = "0 1 * * *")
     public void rentalPending() throws ResourceNotFoundException {
         List<Rental> rentals = rentalService.listPending();
