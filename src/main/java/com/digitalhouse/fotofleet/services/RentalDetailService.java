@@ -32,6 +32,10 @@ public class RentalDetailService {
         return rentalDetailRepository.findPendingOrActiveByProductIdAndDate(productId, startDate, endDate);
     }
 
+    public List<RentalDetail> listPendingAndActiveByProductId(Integer productId) {
+        return rentalDetailRepository.findPendingAndActiveByProductId(productId);
+    }
+
     public List<RentalResponseDto> listByUserId(Integer userId) {
         List<RentalDetail> rentalDetails = rentalDetailRepository.findByUserId(userId);
         List<RentalResponseDto> rentalResponseDtos = new ArrayList<>();

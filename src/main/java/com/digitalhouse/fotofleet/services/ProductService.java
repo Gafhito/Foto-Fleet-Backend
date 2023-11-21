@@ -2,10 +2,12 @@ package com.digitalhouse.fotofleet.services;
 
 import com.digitalhouse.fotofleet.dtos.ImageDto;
 import com.digitalhouse.fotofleet.dtos.ProductDto;
+import com.digitalhouse.fotofleet.dtos.RentalDateDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.models.Category;
 import com.digitalhouse.fotofleet.models.Product;
+import com.digitalhouse.fotofleet.models.RentalDetail;
 import com.digitalhouse.fotofleet.models.Status;
 import com.digitalhouse.fotofleet.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class  ProductService {
     private final CategoryService categoryService;
     private final StatusService statusService;
     private final ProductImageService productImageService;
+    private final RentalDetailService rentalDetailService;
 
     public Page<ProductDto> listAllProducts(Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
@@ -64,8 +67,14 @@ public class  ProductService {
         if(product.isEmpty()) throw new ResourceNotFoundException("No existe un producto con este ID");
 
         List<ImageDto> imageDtos = productImageService.listImagesByProductId(id);
+        List<RentalDetail> rentalDetails = rentalDetailService.listPendingAndActiveByProductId(product.get().getProductId());
+        List<RentalDateDto> rentalDateDtos = new ArrayList<>();
 
-        return new ProductDto(product.get().getProductId(),product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos, product.get().getCharacteristics());
+        for (RentalDetail rd : rentalDetails) {
+            rentalDateDtos.add(new RentalDateDto(rd.getRental().getRentalId(), rd.getRental().getStartDate(), rd.getRental().getEndDate()));
+        }
+
+        return new ProductDto(product.get().getProductId(),product.get().getName(), product.get().getDescription(), product.get().getCategory().getCategoryId(), product.get().getRentalPrice(), product.get().getStock(), product.get().getStatus().getName(), imageDtos, product.get().getCharacteristics(), rentalDateDtos);
     }
 
     public Optional<Product> getProductByName(String name) {
