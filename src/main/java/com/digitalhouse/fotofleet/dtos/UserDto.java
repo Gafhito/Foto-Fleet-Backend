@@ -12,4 +12,7 @@ public record UserDto (
         LocalDateTime registrationDate,
         List<ProductDto> favorites
 ) {
+    public UserDto(String firstName, String lastName, String email) {
+        this(firstName, lastName, email, null, null, null, null);
+    }
 }
