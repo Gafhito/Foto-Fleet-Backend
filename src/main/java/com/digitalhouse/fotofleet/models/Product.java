@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -41,6 +40,12 @@ public class Product {
     @JoinColumn(name = "status_id")
     private Status status;
 
+    @Column(name = "average_rating")
+    private Double average;
+
+    @Column(name = "total_ratings")
+    private Integer totalRantings;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "product_attribute_associations",
@@ -56,6 +61,20 @@ public class Product {
         this.rentalPrice = rentalPrice;
         this.stock = stock;
         this.status = status;
+        this.average = 0.0;
+        this.totalRantings = 0;
+        this.characteristics = characteristics;
+    }
+
+    public Product(String name, String description, Category category, Double rentalPrice, Integer stock, Status status, Double average, Integer totalRantings, List<Characteristics> characteristics) {
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.rentalPrice = rentalPrice;
+        this.stock = stock;
+        this.status = status;
+        this.average = average;
+        this.totalRantings = totalRantings;
         this.characteristics = characteristics;
     }
 }

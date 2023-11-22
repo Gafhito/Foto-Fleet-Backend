@@ -101,6 +101,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/rental").hasAuthority("User")
                 .requestMatchers(HttpMethod.POST, "/rental/active").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.POST, "/rental/completed").hasAnyAuthority("Admin", "Moderator")
+                .requestMatchers(HttpMethod.GET, "/ratings/{productId}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/ratings/{productId}").hasAuthority("User")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
