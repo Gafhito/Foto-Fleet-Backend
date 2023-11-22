@@ -46,4 +46,10 @@ public class RentalDetailService {
 
         return rentalResponseDtos;
     }
+
+    public Boolean checkUserRentalProduct(Integer userId, Integer productId) {
+        List<RentalDetail> rentalDetails = rentalDetailRepository.checkUserRentalProduct(userId, productId);
+
+        return rentalDetails.isEmpty();
+    }
 }
