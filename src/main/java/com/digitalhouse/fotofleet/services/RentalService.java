@@ -9,7 +9,6 @@ import com.digitalhouse.fotofleet.repositories.RentalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class RentalService {
 
     public Rental getById(Integer id) throws ResourceNotFoundException {
         Optional<Rental> rental = rentalRepository.findById(id);
-        if (rental.isEmpty()) throw new ResourceNotFoundException("No existe el alquiler con ID " + id);
+        if (rental.isEmpty()) throw new ResourceNotFoundException("No existe el alquiler con ID: " + id);
 
         return rental.get();
     }
@@ -44,6 +43,13 @@ public class RentalService {
 
     public Rental createRental(Rental rental) {
         return rentalRepository.save(rental);
+    }
+
+    public void deleteRental(Integer id) throws ResourceNotFoundException {
+        Optional<Rental> rental = rentalRepository.findById(id);
+        if(rental.isEmpty()) throw new ResourceNotFoundException("No existe alquiler con ID: " + id);
+
+        rentalRepository.deleteById(id);
     }
 
     @Transactional(rollbackFor = Exception.class)

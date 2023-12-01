@@ -19,13 +19,20 @@ public class RentalDetailService {
 
     public RentalDetail getByRentalId(Integer rentalId) throws ResourceNotFoundException {
         Optional<RentalDetail> rentalDetail = rentalDetailRepository.findByRentalId(rentalId);
-        if (rentalDetail.isEmpty()) throw new ResourceNotFoundException("No existe el detalle del alquiler con ID " + rentalId);
+        if (rentalDetail.isEmpty()) throw new ResourceNotFoundException("No existe el detalle del alquiler con ID: " + rentalId);
 
         return rentalDetail.get();
     }
 
     public RentalDetail createRentalDetail(RentalDetail rentalDetail) {
         return rentalDetailRepository.save(rentalDetail);
+    }
+
+    public void deleteRentalDetail(Integer id) throws ResourceNotFoundException{
+        Optional<RentalDetail> rentalDetail = rentalDetailRepository.findById(id);
+        if(rentalDetail.isEmpty()) throw new ResourceNotFoundException("No existe el detalle del alquiler con ID: " + id);
+
+        rentalDetailRepository.deleteById(id);
     }
 
     public List<RentalDetail> listPendingOrActiveByProductIdAndDate(Integer productId, LocalDate startDate, LocalDate endDate) {
