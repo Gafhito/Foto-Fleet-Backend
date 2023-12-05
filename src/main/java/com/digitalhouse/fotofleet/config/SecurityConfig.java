@@ -99,6 +99,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/characteristics").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.POST, "/characteristics/{productId}").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.POST, "/rental").hasAuthority("User")
+                .requestMatchers(HttpMethod.GET, "/rental/pending").hasAnyAuthority("Admin", "Moderator")
+                .requestMatchers(HttpMethod.GET, "/rental/active").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.POST, "/rental/active").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.POST, "/rental/completed").hasAnyAuthority("Admin", "Moderator")
                 .requestMatchers(HttpMethod.GET, "/ratings/{productId}").permitAll()
