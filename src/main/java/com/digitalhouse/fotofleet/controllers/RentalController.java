@@ -57,4 +57,14 @@ public class RentalController {
     public ResponseEntity<?> statusCompleted(@RequestParam Integer rentalId) throws ResourceNotFoundException {
         return new ResponseEntity<>(rentalService.changeStatus(rentalId, "Completed"), HttpStatus.OK);
     }
+
+    @Operation(summary = "Cambiar estado de alquiler a Cancelado", description = "Permite a un usuario cambiar el estado de alquiler de un producto en concreto a Cancelado", responses = {
+            @ApiResponse(responseCode = "200", description = "Cancelación exitosa", content = @Content(schema = @Schema(implementation = RentalResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontró el alquiler", content = @Content(schema = @Schema(implementation = ResponseException.class)))
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping("/canceled")
+    public ResponseEntity<?> statusCanceled(@RequestParam Integer rentalId, @RequestHeader(HttpHeaders.AUTHORIZATION) String jwt) throws ResourceNotFoundException, BadRequestException {
+        return new ResponseEntity<>(rentalService.cancelRental(rentalId, jwt), HttpStatus.OK);
+    }
 }
