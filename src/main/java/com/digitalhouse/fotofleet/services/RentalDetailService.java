@@ -19,7 +19,7 @@ public class RentalDetailService {
 
     public RentalDetail getByRentalId(Integer rentalId) throws ResourceNotFoundException {
         Optional<RentalDetail> rentalDetail = rentalDetailRepository.findByRentalId(rentalId);
-        if (rentalDetail.isEmpty()) throw new ResourceNotFoundException("No existe el detalle del alquiler con ID " + rentalId);
+        if (rentalDetail.isEmpty()) throw new ResourceNotFoundException("No existe el detalle del alquiler con ID: " + rentalId);
 
         return rentalDetail.get();
     }
@@ -27,6 +27,7 @@ public class RentalDetailService {
     public RentalDetail createRentalDetail(RentalDetail rentalDetail) {
         return rentalDetailRepository.save(rentalDetail);
     }
+
 
     public List<RentalDetail> listPendingOrActiveByProductIdAndDate(Integer productId, LocalDate startDate, LocalDate endDate) {
         return rentalDetailRepository.findPendingOrActiveByProductIdAndDate(productId, startDate, endDate);
@@ -38,6 +39,17 @@ public class RentalDetailService {
 
     public List<RentalResponseDto> listByUserId(Integer userId) {
         List<RentalDetail> rentalDetails = rentalDetailRepository.findByUserId(userId);
+        List<RentalResponseDto> rentalResponseDtos = new ArrayList<>();
+
+        for (RentalDetail rd : rentalDetails) {
+            rentalResponseDtos.add(new RentalResponseDto(rd.getDetailId(), rd.getRental().getRentalId(), rd.getProduct().getProductId(), rd.getQuantity(), rd.getRentalPrice(), rd.getRental().getStartDate(), rd.getRental().getEndDate(), rd.getRental().getStatus().getName()));
+        }
+
+        return rentalResponseDtos;
+    }
+
+    public List<RentalResponseDto> listByUserIdAndStatus(Integer userId, String status) {
+        List<RentalDetail> rentalDetails = rentalDetailRepository.findByUserIdAndStatus(userId, status);
         List<RentalResponseDto> rentalResponseDtos = new ArrayList<>();
 
         for (RentalDetail rd : rentalDetails) {

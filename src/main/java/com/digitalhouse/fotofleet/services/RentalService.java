@@ -9,7 +9,6 @@ import com.digitalhouse.fotofleet.repositories.RentalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,9 +26,16 @@ public class RentalService {
 
     public Rental getById(Integer id) throws ResourceNotFoundException {
         Optional<Rental> rental = rentalRepository.findById(id);
-        if (rental.isEmpty()) throw new ResourceNotFoundException("No existe el alquiler con ID " + id);
+        if (rental.isEmpty()) throw new ResourceNotFoundException("No existe el alquiler con ID: " + id);
 
         return rental.get();
+    }
+
+    public List<RentalResponseDto> getRentalByEmailAndStatus(String email, String status) throws ResourceNotFoundException {
+        Optional<User> user = userService.getUserByEmail(email);
+        if (user.isEmpty()) throw new ResourceNotFoundException("No existe un usuario registrado con este email");
+
+        return rentalDetailService.listByUserIdAndStatus(user.get().getUserId(), status);
     }
 
     public List<Rental> listDelayed() {
@@ -87,5 +93,16 @@ public class RentalService {
         Rental newRental = rentalRepository.save(rental);
 
         return new RentalResponseDto(rentalDetail.getDetailId(), newRental.getRentalId(), rentalDetail.getProduct().getProductId(), rentalDetail.getQuantity(), rentalDetail.getRentalPrice(), newRental.getStartDate(), newRental.getEndDate(), newRental.getStatus().getName());
+    }
+
+    public RentalResponseDto cancelRental(Integer rentalId, String jwt) throws ResourceNotFoundException, BadRequestException {
+        User user = userService.getUserByJwt(jwt);
+        Optional<Rental> rental = rentalRepository.findById(rentalId);
+        if(rental.isEmpty()) throw new ResourceNotFoundException("No existe alquiler con ID: " + rentalId);
+        if(!user.getEmail().equals(rental.get().getUser().getEmail())) throw new BadRequestException("El alquiler proporcionado no pertenece a este usuario");
+        Optional<Status> status = statusService.getStatusByName("Pending");
+        if(status.isEmpty()) throw new ResourceNotFoundException("No hay alquileres en estado pendiente");
+
+        return changeStatus(rentalId,"Canceled");
     }
 }

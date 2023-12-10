@@ -23,6 +23,9 @@ public interface RentalDetailRepository extends JpaRepository<RentalDetail, Inte
     @Query("select rd from RentalDetail rd where rd.rental.user.userId = ?1")
     List<RentalDetail> findByUserId(Integer userId);
 
+    @Query("select rd from RentalDetail rd where rd.rental.user.userId = ?1 and rd.rental.status.name = ?2")
+    List<RentalDetail> findByUserIdAndStatus(Integer userId, String status);
+
     @Query("select rd from RentalDetail rd where rd.product.productId = ?1 and (rd.rental.status.name = 'Pending' or rd.rental.status.name = 'Active')")
     List<RentalDetail> findPendingAndActiveByProductId(Integer productId);
 

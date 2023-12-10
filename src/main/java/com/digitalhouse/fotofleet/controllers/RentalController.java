@@ -38,6 +38,26 @@ public class RentalController {
         return new ResponseEntity<>(rentalService.addRentals(jwt, rentalDtos), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Listado de reservas pendientes", description = "Permite a un administrador obtener el listado de reservas en estado pendiente en base al email de un usuario", responses = {
+            @ApiResponse(responseCode = "200", description = "Listado obtenido exitosamente", content = @Content(schema = @Schema(implementation = RentalResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontró el usuario", content = @Content(schema = @Schema(implementation = ResponseException.class)))
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/pending")
+    public ResponseEntity<?> getPendings(@RequestParam String email) throws ResourceNotFoundException {
+        return new ResponseEntity<>(rentalService.getRentalByEmailAndStatus(email, "Pending"), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Listado de reservas activas", description = "Permite a un administrador obtener el listado de reservas en estado activa en base al email de un usuario", responses = {
+            @ApiResponse(responseCode = "200", description = "Listado obtenido exitosamente", content = @Content(schema = @Schema(implementation = RentalResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontró el usuario", content = @Content(schema = @Schema(implementation = ResponseException.class)))
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/active")
+    public ResponseEntity<?> getActives(@RequestParam String email) throws ResourceNotFoundException {
+        return new ResponseEntity<>(rentalService.getRentalByEmailAndStatus(email, "Active"), HttpStatus.OK);
+    }
+
     @Operation(summary = "Cambiar estado de alquiler a Activo", description = "Permite a un administrador cambiar el estado de alquiler de un producto en concreto a Activo", responses = {
             @ApiResponse(responseCode = "201", description = "Petición creada exitosamente", content = @Content(schema = @Schema(implementation = RentalResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "No se encontró el producto", content = @Content(schema = @Schema(implementation = ResponseException.class)))
@@ -56,5 +76,15 @@ public class RentalController {
     @PostMapping("/completed")
     public ResponseEntity<?> statusCompleted(@RequestParam Integer rentalId) throws ResourceNotFoundException {
         return new ResponseEntity<>(rentalService.changeStatus(rentalId, "Completed"), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Cambiar estado de alquiler a Cancelado", description = "Permite a un usuario cambiar el estado de alquiler de un producto en concreto a Cancelado", responses = {
+            @ApiResponse(responseCode = "200", description = "Cancelación exitosa", content = @Content(schema = @Schema(implementation = RentalResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontró el alquiler", content = @Content(schema = @Schema(implementation = ResponseException.class)))
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping("/canceled")
+    public ResponseEntity<?> statusCanceled(@RequestParam Integer rentalId, @RequestHeader(HttpHeaders.AUTHORIZATION) String jwt) throws ResourceNotFoundException, BadRequestException {
+        return new ResponseEntity<>(rentalService.cancelRental(rentalId, jwt), HttpStatus.OK);
     }
 }
