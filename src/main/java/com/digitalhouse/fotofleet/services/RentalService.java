@@ -31,6 +31,13 @@ public class RentalService {
         return rental.get();
     }
 
+    public List<RentalResponseDto> getRentalByEmailAndStatus(String email, String status) throws ResourceNotFoundException {
+        Optional<User> user = userService.getUserByEmail(email);
+        if (user.isEmpty()) throw new ResourceNotFoundException("No existe un usuario registrado con este email");
+
+        return rentalDetailService.listByUserIdAndStatus(user.get().getUserId(), status);
+    }
+
     public List<Rental> listDelayed() {
         LocalDate actualDate = LocalDate.now();
         return rentalRepository.findDelayed(actualDate);

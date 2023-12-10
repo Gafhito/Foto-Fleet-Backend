@@ -48,6 +48,17 @@ public class RentalDetailService {
         return rentalResponseDtos;
     }
 
+    public List<RentalResponseDto> listByUserIdAndStatus(Integer userId, String status) {
+        List<RentalDetail> rentalDetails = rentalDetailRepository.findByUserIdAndStatus(userId, status);
+        List<RentalResponseDto> rentalResponseDtos = new ArrayList<>();
+
+        for (RentalDetail rd : rentalDetails) {
+            rentalResponseDtos.add(new RentalResponseDto(rd.getDetailId(), rd.getRental().getRentalId(), rd.getProduct().getProductId(), rd.getQuantity(), rd.getRentalPrice(), rd.getRental().getStartDate(), rd.getRental().getEndDate(), rd.getRental().getStatus().getName()));
+        }
+
+        return rentalResponseDtos;
+    }
+
     public Boolean checkUserRentalProduct(Integer userId, Integer productId) {
         List<RentalDetail> rentalDetails = rentalDetailRepository.checkUserRentalProduct(userId, productId);
 
