@@ -24,6 +24,8 @@ public class RentalService {
     private final StatusService statusService;
     private final RentalDetailService rentalDetailService;
 
+    private final EmailSenderServiceRental emailSenderServiceRental;
+
     public Rental getById(Integer id) throws ResourceNotFoundException {
         Optional<Rental> rental = rentalRepository.findById(id);
         if (rental.isEmpty()) throw new ResourceNotFoundException("No existe el alquiler con ID: " + id);
@@ -58,6 +60,7 @@ public class RentalService {
         if (rentalDtos.size() > 20) throw new BadRequestException("El carrito de compra no puede exceder los 20 artículos");
 
         List<RentalResponseDto> rentalResponseDtos = new ArrayList<>();
+        List<Product> productList = new ArrayList<>();
         for (RentalDto rentalDto : rentalDtos) {
             Optional<Product> product = productService.getById(rentalDto.productId());
             if (product.isEmpty()) throw new ResourceNotFoundException("No existe el producto con ID " + rentalDto.productId() + " enviado en el listado");
@@ -78,8 +81,10 @@ public class RentalService {
             RentalDetail rentalDetail = rentalDetailService.createRentalDetail(new RentalDetail(rental, product.get(), rentalDto.quantity(), rentalPrice, daysRented));
 
             rentalResponseDtos.add(new RentalResponseDto(rentalDetail.getDetailId(), rental.getRentalId(), product.get().getProductId(), rentalDetail.getQuantity(), rentalDetail.getRentalPrice(), rental.getStartDate(), rental.getEndDate(), status.get().getName()));
+            productList.add(product.get());
         }
-
+        // Después de Rentar, llama al método para enviar el correo personalizado
+        emailSenderServiceRental.enviarCorreoRental(user.getEmail(), user.getFirstName(), user.getLastName(), productList);
         return rentalResponseDtos;
     }
 

@@ -1,7 +1,9 @@
 package com.digitalhouse.fotofleet.services;
 
 
+import com.digitalhouse.fotofleet.dtos.RentalDto;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
+import com.digitalhouse.fotofleet.models.Product;
 import com.digitalhouse.fotofleet.models.User;
 import com.digitalhouse.fotofleet.security.JwtGenerator;
 import jakarta.mail.MessagingException;
@@ -13,32 +15,34 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class EmailSenderService {
+public class EmailSenderServiceRental {
     private final JavaMailSender mailSender;
-    private final JwtGenerator jwtGenerator;
-    private final UserService userService;
+
+
     
 
-    public void enviarCorreo(String toEmail, String firstName, String lastName) {
+    public void enviarCorreoRental(String toEmail, String firstName, String lastName, List<Product> products) {
         // Construye el asunto y el cuerpo del mail llamando al usuario
-        String subject = "¡Bienvenido a nuestra aplicación!";
+        String subject = "¡Has realizado una reserva en Fotofleet!";
 
         // Construye el cuerpo del correo con un enlace HTML
         String body = "Hola " + firstName + " " + lastName + ",<br><br>"
-                + "Te has registrado exitosamente en nuestra aplicación. ¡Bienvenido!<br><br>"
-                + "Gracias por unirte a nosotros. Para acceder a la aplicación, haz clic en el siguiente enlace:<br>"
-                + "<a href=\"http://1023c07-grupo3.s3-website-us-east-1.amazonaws.com/\">Acceder a la aplicación</a>";
+                + "Te comentamos que realizaste una reserva de los siguientes productos:<br><br>";
+        for(Product p:products){
+            body+= p.getName()+"<br>";
 
-
-        // Llama al metodo sendMail de EmailSenderService
-        sendEmail(toEmail, subject, body);
+        }
+        body+= "Muchas gracias por elegirnos";
+        // Llama al metodo sendMail de EmailSenderServiceRental
+        sendEmailRental(toEmail, subject, body);
     }
 
-    public void sendEmail(String toEmail,
+    public void sendEmailRental(String toEmail,
                         String subject,
                         String body){
 
@@ -59,14 +63,5 @@ public class EmailSenderService {
             e.printStackTrace();
             // Puedes agregar un manejo adecuado de excepciones aquí
         }
-    }
-
-    public void resendEmail(String jwt) throws ResourceNotFoundException {
-        String email = jwtGenerator.getEmailOfJwt(jwt.substring(7));
-
-        Optional<User> u = userService.getUserByEmail(email);
-        if (u.isEmpty()) throw new ResourceNotFoundException("No existe un usuario con este email");
-
-        enviarCorreo(u.get().getEmail(), u.get().getFirstName(), u.get().getLastName());
     }
 }
