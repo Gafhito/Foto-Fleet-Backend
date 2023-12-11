@@ -5,6 +5,7 @@ import com.digitalhouse.fotofleet.dtos.RentalResponseDto;
 import com.digitalhouse.fotofleet.exceptions.BadRequestException;
 import com.digitalhouse.fotofleet.exceptions.ResourceNotFoundException;
 import com.digitalhouse.fotofleet.exceptions.ResponseException;
+import com.digitalhouse.fotofleet.services.EmailSenderServiceRental;
 import com.digitalhouse.fotofleet.services.RentalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,6 +27,7 @@ import java.util.List;
 @Tag(name = "Alquileres", description = "Permite a los usuarios alquilar productos de la página")
 public class RentalController {
     private final RentalService rentalService;
+    private final EmailSenderServiceRental emailSenderServiceRental;
 
     @Operation(summary = "Añadir un alquiler", description = "Agrega un carrito de alquiler al usuario en base a la petición enviada con el JWT en la cabecera de Authorization", responses = {
             @ApiResponse(responseCode = "201", description = "Petición creada exitosamente", content = @Content(schema = @Schema(implementation = RentalResponseDto.class))),
